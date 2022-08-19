@@ -1,5 +1,24 @@
-function App() {
-  return <h1>GOATS</h1>;
+import React, { Component } from "react";
+import { Navigate, Route, Routes } from "react-router-dom";
+
+import Note from "./components/note";
+
+class App extends Component {
+  componentDidMount() {
+    document.title = "GOATS";
+  }
+
+  render() {
+    return (
+      <React.Fragment>
+        <main className="container">
+          <Routes>
+            <Route path="/note" element={<Note />}></Route>
+          </Routes>
+        </main>
+      </React.Fragment>
+    );
+  }
 }
 
 export default App;
