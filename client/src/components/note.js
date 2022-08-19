@@ -4,7 +4,7 @@ import DropDown from "./dropDown";
 class Note extends Component {
   state = {
     goals: [
-      "Balance",
+      "Balance 2",
       "Ocular Control",
       "Bilateral Integration",
       "Fine Motor Control",
