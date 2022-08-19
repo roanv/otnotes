@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 
 import Note from "./components/note";
 
@@ -13,7 +13,7 @@ class App extends Component {
       <React.Fragment>
         <main className="container">
           <Routes>
-            <Route path="/note" element={<Note />}></Route>
+            <Route path="/" element={<Note />}></Route>
           </Routes>
         </main>
       </React.Fragment>
