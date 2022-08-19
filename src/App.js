@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
+import { Button } from "@mui/material";
 
 import Note from "./components/note";
 
@@ -11,6 +12,7 @@ class App extends Component {
   render() {
     return (
       <React.Fragment>
+        {/* <Button variant="contained">Show DB</Button> */}
         <main className="container">
           <Routes>
             <Route path="/note" element={<Note />}></Route>
@@ -20,6 +22,9 @@ class App extends Component {
       </React.Fragment>
     );
   }
+  // onShowDB() {
+  //   console.log(config.get("db"));
+  // }
 }
 
 export default App;
