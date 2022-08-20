@@ -1,16 +1,9 @@
 import axios from "axios";
 import React, { Component } from "react";
 import API_URL from "../api";
-import {
-  IconButton,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemText,
-} from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
+import List from "./common/CrudList";
 
-class Note extends Component {
+class Goals extends Component {
   state = {
     goals: [],
   };
@@ -21,32 +14,8 @@ class Note extends Component {
   }
 
   render() {
-    return (
-      <React.Fragment>
-        <List
-          sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}
-        >
-          {this.state.goals.map((item) => {
-            // const labelId = "checkbox-list-label-${value}";
-            return (
-              <ListItem
-                key={item}
-                secondaryAction={
-                  <IconButton edge="end" aria-label="comments">
-                    <DeleteIcon />
-                  </IconButton>
-                }
-              >
-                <ListItemButton>
-                  <ListItemText primary={item}></ListItemText>
-                </ListItemButton>
-              </ListItem>
-            );
-          })}
-        </List>
-      </React.Fragment>
-    );
+    return <List data={this.state.goals}></List>;
   }
 }
 
-export default Note;
+export default Goals;

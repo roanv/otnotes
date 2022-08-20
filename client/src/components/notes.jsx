@@ -3,7 +3,7 @@ import React, { Component } from "react";
 import DropDown from "./common/dropDown";
 import API_URL from "../api";
 
-class Note extends Component {
+class Notes extends Component {
   state = {
     goals: [],
     principles: [],
@@ -26,4 +26,4 @@ class Note extends Component {
   }
 }
 
-export default Note;
+export default Notes;
