@@ -1,17 +1,10 @@
 const express = require("express");
 const router = express.Router();
+const db = require("../database/pg");
 
 router.get("/", async (req, res) => {
-  res.json([
-    "Weight shift",
-    "Elongation",
-    "Rotation",
-    "Narrow base of support",
-    "Elevate point of gravity",
-    "Decrease external support",
-    "Increase external resistance",
-    "Open & closed eyes",
-  ]);
+  const { rows } = await db.query("SELECT * FROM principle");
+  res.json(rows.map((principle) => principle.name));
 });
 
 module.exports = router;
