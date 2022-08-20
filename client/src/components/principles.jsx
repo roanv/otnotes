@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { Component } from "react";
 import API_URL from "../api";
-import List from "./common/CrudList";
+import List from "./common/crudList";
 
 class Principles extends Component {
   state = {

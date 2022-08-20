@@ -12,14 +12,7 @@ export default function DropDown({ data }) {
     <List sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}>
       {data.map((item) => {
         return (
-          <ListItem
-            key={item}
-            secondaryAction={
-              <IconButton edge="end" aria-label="comments">
-                <DeleteIcon />
-              </IconButton>
-            }
-          >
+          <ListItem>
             <ListItemButton>
               <ListItemText primary={item}></ListItemText>
             </ListItemButton>
