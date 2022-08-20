@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { Component } from "react";
 import API_URL from "../api";
 import List from "./common/crudList";
+import { Button } from "@mui/material";
 
 class Goals extends Component {
   state = {
@@ -14,7 +15,12 @@ class Goals extends Component {
   }
 
   render() {
-    return <List data={this.state.goals}></List>;
+    return (
+      <React.Fragment>
+        <Button>New</Button>
+        <List data={this.state.goals}></List>
+      </React.Fragment>
+    );
   }
 }
 

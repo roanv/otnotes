@@ -1,11 +1,4 @@
-import {
-  List,
-  ListItem,
-  IconButton,
-  ListItemButton,
-  ListItemText,
-} from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
+import { List, ListItem, ListItemButton, ListItemText } from "@mui/material";
 
 export default function DropDown({ data }) {
   return (

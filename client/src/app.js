@@ -8,7 +8,7 @@ import Principles from "./components/principles";
 
 class App extends Component {
   componentDidMount() {
-    document.title = "GOATS";
+    document.title = "Goats";
   }
 
   render() {

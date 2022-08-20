@@ -1,14 +1,4 @@
-import {
-  AppBar,
-  Toolbar,
-  IconButton,
-  Menu,
-  MenuItem,
-  Button,
-} from "@mui/material";
-import { NavLink, Link } from "react-router-dom";
-import MenuIcon from "@mui/icons-material/Menu";
-import { Box } from "@mui/system";
+import { AppBar, Toolbar, Button } from "@mui/material";
 
 const pages = ["Notes", "Goals", "Principles"];
 
