@@ -1,9 +1,9 @@
 import React, { Component } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
-import { Button } from "@mui/material";
 
-import Note from "./components/note";
+import Note from "./components/notes";
 import Goals from "./components/goals";
+import NavBar from "./components/navbar";
 
 class App extends Component {
   componentDidMount() {
@@ -13,20 +13,17 @@ class App extends Component {
   render() {
     return (
       <React.Fragment>
-        {/* <Button variant="contained">Show DB</Button> */}
+        <NavBar />
         <main className="container">
           <Routes>
-            <Route path="/note" element={<Note />}></Route>
+            <Route path="/notes" element={<Note />}></Route>
             <Route path="/goals" element={<Goals />}></Route>
-            <Route path="/" element={<Navigate replace to="/note" />} />
+            <Route path="/" element={<Navigate replace to="/notes" />} />
           </Routes>
         </main>
       </React.Fragment>
     );
   }
-  // onShowDB() {
-  //   console.log(config.get("db"));
-  // }
 }
 
 export default App;

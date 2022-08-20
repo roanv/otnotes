@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { Component } from "react";
-import DropDown from "./dropDown";
+import DropDown from "./common/dropDown";
 import API_URL from "../api";
 
 class Note extends Component {
