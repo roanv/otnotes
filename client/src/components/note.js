@@ -6,22 +6,14 @@ import API_URL from "../api";
 class Note extends Component {
   state = {
     goals: [],
-    principles: [
-      "Weight shift",
-      "Elongation",
-      "Rotation",
-      "Narrow base of support",
-      "Elevate point of gravity",
-      "Decrease external support",
-      "Increase external resistance",
-      "Open & closed eyes",
-    ],
+    principles: [],
   };
 
   async componentDidMount() {
     const { data: goals } = await axios.get(`${API_URL}/goals`);
-    console.log(goals);
+    const { data: principles } = await axios.get(`${API_URL}/principles`);
     this.setState({ goals });
+    this.setState({ principles });
   }
 
   render() {
