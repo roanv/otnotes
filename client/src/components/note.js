@@ -1,15 +1,11 @@
+import axios from "axios";
 import React, { Component } from "react";
 import DropDown from "./dropDown";
+import API_URL from "../api";
 
 class Note extends Component {
   state = {
-    goals: [
-      "Balance 2",
-      "Ocular Control",
-      "Bilateral Integration",
-      "Fine Motor Control",
-      "Visual Perception",
-    ],
+    goals: [],
     principles: [
       "Weight shift",
       "Elongation",
@@ -21,6 +17,12 @@ class Note extends Component {
       "Open & closed eyes",
     ],
   };
+
+  async componentDidMount() {
+    const { data: goals } = await axios.get(`${API_URL}/goals`);
+    console.log(goals);
+    this.setState({ goals });
+  }
 
   render() {
     return (

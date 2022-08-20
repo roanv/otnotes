@@ -4,6 +4,7 @@
         "heroku-postbuild": "cd client && npm install && npm run build"
     },
     "dependencies": {
+        "axios": "^0.27.2",
         "dotenv": "^16.0.1"
     }
 }
