@@ -5,7 +5,7 @@ export default function DropDown({ data }) {
     <List sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}>
       {data.map((item) => {
         return (
-          <ListItem>
+          <ListItem key={item}>
             <ListItemButton>
               <ListItemText primary={item}></ListItemText>
             </ListItemButton>
