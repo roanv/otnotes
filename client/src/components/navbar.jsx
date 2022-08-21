@@ -1,4 +1,5 @@
 import { AppBar, Toolbar, Button } from "@mui/material";
+import { Link as RouterLink } from "react-router-dom";
 
 const NavBar = ({ pages }, buttons) => {
   return (
@@ -6,8 +7,9 @@ const NavBar = ({ pages }, buttons) => {
       <Toolbar>
         {pages.map((page) => (
           <Button
+            component={RouterLink}
+            to={page}
             key={page}
-            href={page}
             sx={{ my: 2, color: "white", display: "block" }}
           >
             {page}

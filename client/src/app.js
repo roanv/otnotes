@@ -13,6 +13,7 @@ class App extends Component {
     goals: [],
     principles: [],
   };
+
   componentDidMount() {
     document.title = "Goats";
   }
