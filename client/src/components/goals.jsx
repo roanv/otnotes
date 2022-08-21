@@ -17,7 +17,6 @@ class Goals extends Component {
   render() {
     return (
       <React.Fragment>
-        <Button>New</Button>
         <List data={this.state.goals}></List>
       </React.Fragment>
     );
