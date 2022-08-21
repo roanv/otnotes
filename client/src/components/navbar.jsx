@@ -1,8 +1,6 @@
 import { AppBar, Toolbar, Button } from "@mui/material";
 
-const pages = ["Notes", "Goals", "Principles"];
-
-const NavBar = () => {
+const NavBar = ({ pages }, buttons) => {
   return (
     <AppBar position="static">
       <Toolbar>
