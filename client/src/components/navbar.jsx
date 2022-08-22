@@ -34,7 +34,7 @@ const NavBar = ({ pages, window }) => {
   };
 
   useEffect(() => {
-    setTitle(location.pathname.substring(1).capitalize());
+    setTitle(location.pathname.substring(1));
   }, [location]);
 
   const [selectedIndex, setSelectedIndex] = useState(-1);
