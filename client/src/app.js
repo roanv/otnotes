@@ -8,6 +8,7 @@ import Principles from "./components/principles";
 
 import API_URL from "./api";
 import axios from "axios";
+import { Box, Toolbar } from "@mui/material";
 
 export default function App() {
   const [pages] = useState(["Notes", "Goals", "Principles"]);
@@ -35,23 +36,26 @@ export default function App() {
   }, []);
 
   return (
-    <React.Fragment>
-      <NavBar pages={pages} />
-      <main className="container">
-        <Routes>
-          <Route
-            path="/notes"
-            element={<Notes goals={goals} principles={principles} />}
-          ></Route>
-          <Route path="/goals" element={<Goals goals={goals} />}></Route>
-          <Route
-            path="/principles"
-            element={<Principles principles={principles} />}
-          ></Route>
-          <Route path="/" element={<Navigate replace to="/notes" />} />
-          <Route path="*" element={<Navigate replace to="/" />} />
-        </Routes>
-      </main>
-    </React.Fragment>
+    <>
+      <Box sx={{ display: "flex" }}>
+        <NavBar pages={pages} />
+        <main className="container">
+          <Toolbar />
+          <Routes>
+            <Route
+              path="/notes"
+              element={<Notes goals={goals} principles={principles} />}
+            ></Route>
+            <Route path="/goals" element={<Goals goals={goals} />}></Route>
+            <Route
+              path="/principles"
+              element={<Principles principles={principles} />}
+            ></Route>
+            <Route path="/" element={<Navigate replace to="/notes" />} />
+            <Route path="*" element={<Navigate replace to="/" />} />
+          </Routes>
+        </main>
+      </Box>
+    </>
   );
 }

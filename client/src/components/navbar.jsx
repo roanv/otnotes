@@ -4,9 +4,7 @@ import React, { useEffect, useState } from "react";
 import {
   AppBar,
   Toolbar,
-  Button,
   IconButton,
-  Container,
   Typography,
   Box,
   Drawer,
@@ -15,61 +13,105 @@ import {
   ListItem,
   ListItemButton,
   ListItemText,
+  CssBaseline,
 } from "@mui/material";
 
 import MenuIcon from "@mui/icons-material/Menu";
+import { styled } from "@mui/material/styles";
 
-const NavBar = ({ pages }, props) => {
-  const { window } = props;
+const drawerWidth = 240;
+
+const NavBar = ({ pages, window }) => {
   const location = useLocation();
   const [title, setTitle] = useState("Goats");
-  const [mobileOpen, setMobileOpen] = React.useState(false);
+
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  const container =
+    window !== undefined ? () => window().document.body : undefined;
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
 
-  const container =
-    window !== undefined ? () => window().document.body : undefined;
-  const drawerWidth = 240;
-
   useEffect(() => {
     setTitle(location.pathname.substring(1));
   }, [location]);
 
+  const [selectedIndex, setSelectedIndex] = useState(1);
+  const handleListItemClick = (event, index) => {
+    setSelectedIndex(index);
+  };
+
+  const drawer = (
+    <div>
+      <Toolbar>
+        <Typography
+          variant="h6"
+          noWrap
+          component="a"
+          href="/"
+          sx={{
+            fontFamily: "fantasy",
+            fontWeight: 500,
+            letterSpacing: ".3rem",
+            color: "inherit",
+            textDecoration: "none",
+          }}
+        >
+          GOATS
+        </Typography>
+      </Toolbar>
+      <Divider />
+      <List component="nav">
+        {pages.map((page, index) => (
+          <ListItem key={page} disablePadding>
+            <ListItemButton
+              component={Link}
+              to={page}
+              selected={selectedIndex === index}
+              onClick={(event) => handleListItemClick(event, index)}
+            >
+              <ListItemText primary={page} />
+            </ListItemButton>
+          </ListItem>
+        ))}
+      </List>
+      <Divider />
+    </div>
+  );
+
   return (
     <>
-      <AppBar position="static">
-        <Container maxWidth="xl">
-          <Toolbar disableGutters>
-            <IconButton
-              color="inherit"
-              aria-label="open drawer"
-              edge="start"
-              onClick={handleDrawerToggle}
-              sx={{ mr: 2, display: { sm: "none" } }}
-            >
-              <MenuIcon />
-            </IconButton>
-            <Typography variant="h6" color="inherit" sx={{ flexGrow: 1 }}>
-              {title}
-            </Typography>
-            <Box sx={{ display: { xs: "none", sm: "block" } }}>
-              {pages.map((page) => (
-                <Button
-                  component={Link}
-                  to={page}
-                  key={page}
-                  sx={{ my: 2, color: "inherit" }}
-                >
-                  {page}
-                </Button>
-              ))}
-            </Box>
-          </Toolbar>
-        </Container>
+      <CssBaseline />
+      <AppBar
+        position="fixed"
+        sx={{
+          width: { sm: `calc(100% - ${drawerWidth}px)` },
+          ml: { sm: `${drawerWidth}px` },
+        }}
+      >
+        <Toolbar>
+          <IconButton
+            color="inherit"
+            aria-label="open drawer"
+            edge="start"
+            onClick={handleDrawerToggle}
+            sx={{ mr: 2, display: { sm: "none" } }}
+          >
+            <MenuIcon />
+          </IconButton>
+          <Typography variant="h6" noWrap component="div">
+            {title}
+          </Typography>
+        </Toolbar>
       </AppBar>
-      <Box component="nav">
+      <Box
+        component="nav"
+        sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
+        aria-label="mailbox folders"
+      >
+        {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
         <Drawer
           container={container}
           variant="temporary"
@@ -86,25 +128,20 @@ const NavBar = ({ pages }, props) => {
             },
           }}
         >
-          <Box onClick={handleDrawerToggle} sx={{ textAlign: "center" }}>
-            <Typography variant="h6" sx={{ my: 2 }}>
-              GOATS
-            </Typography>
-            <Divider />
-            <List>
-              {pages.map((page) => (
-                <ListItem key={page} disablePadding>
-                  <ListItemButton
-                    component={Link}
-                    to={page}
-                    sx={{ textAlign: "center" }}
-                  >
-                    <ListItemText primary={page} />
-                  </ListItemButton>
-                </ListItem>
-              ))}
-            </List>
-          </Box>
+          {drawer}
+        </Drawer>
+        <Drawer
+          variant="permanent"
+          sx={{
+            display: { xs: "none", sm: "block" },
+            "& .MuiDrawer-paper": {
+              boxSizing: "border-box",
+              width: drawerWidth,
+            },
+          }}
+          open
+        >
+          {drawer}
         </Drawer>
       </Box>
     </>
