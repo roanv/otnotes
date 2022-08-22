@@ -1,29 +1,28 @@
 import axios from "axios";
-import React, { Component } from "react";
+import React, { useState, useEffect } from "react";
 import DropDown from "./common/dropDown";
 import API_URL from "../api";
 
-class Notes extends Component {
-  state = {
-    goals: [],
-    principles: [],
-  };
+export default function Notes() {
+  const [goals, setGoals] = useState([]);
+  const [principles, setPrinciples] = useState([]);
 
-  async componentDidMount() {
-    const { data: goals } = await axios.get(`${API_URL}/goals`);
-    const { data: principles } = await axios.get(`${API_URL}/principles`);
-    this.setState({ goals });
-    this.setState({ principles });
-  }
-
-  render() {
-    return (
-      <React.Fragment>
-        <DropDown options={this.state.goals} label="Goals" />
-        <DropDown options={this.state.principles} label="Principles" />
-      </React.Fragment>
-    );
-  }
+  useState(() => {
+    const updateGoals = async () => {
+      const { data } = await axios.get(`${API_URL}/goals`);
+      setGoals(data);
+    };
+    const updatePrinciples = async () => {
+      const { data } = await axios.get(`${API_URL}/principles`);
+      setPrinciples(data);
+    };
+    updateGoals();
+    updatePrinciples();
+  }, []);
+  return (
+    <React.Fragment>
+      <DropDown options={goals} label="Goals" />
+      <DropDown options={principles} label="Principles" />
+    </React.Fragment>
+  );
 }
-
-export default Notes;
