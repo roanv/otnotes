@@ -17,7 +17,6 @@ import {
 } from "@mui/material";
 
 import MenuIcon from "@mui/icons-material/Menu";
-import { styled } from "@mui/material/styles";
 
 const drawerWidth = 240;
 
@@ -35,14 +34,14 @@ const NavBar = ({ pages, window }) => {
   };
 
   useEffect(() => {
-    setTitle(location.pathname.substring(1));
+    setTitle(location.pathname.substring(1).capitalize());
   }, [location]);
 
   const [selectedIndex, setSelectedIndex] = useState(-1);
 
   useEffect(() => {
     setSelectedIndex(pages.indexOf(title));
-  }, [title]);
+  }, [title, pages]);
 
   const handleListItemClick = (event, index) => {
     handleDrawerToggle();
