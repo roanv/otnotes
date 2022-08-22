@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Navigate, Route, Routes, useLocation } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 
 import Notes from "./components/notes";
 import Goals from "./components/goals";
