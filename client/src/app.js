@@ -8,7 +8,6 @@ import Principles from "./components/principles";
 
 class App extends Component {
   state = {
-    nabButtons: [],
     navPages: ["Notes", "Goals", "Principles"],
     goals: [],
     principles: [],
@@ -19,10 +18,10 @@ class App extends Component {
   }
 
   render() {
-    const { navPages, navButtons } = this.state;
+    const { navPages } = this.state;
     return (
       <React.Fragment>
-        <NavBar pages={navPages} buttons={navButtons} />
+        <NavBar pages={navPages} />
         <main className="container">
           <Routes>
             <Route path="/notes" element={<Notes />}></Route>

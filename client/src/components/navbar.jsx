@@ -1,7 +1,7 @@
 import { AppBar, Toolbar, Button } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
 
-const NavBar = ({ pages }, buttons) => {
+const NavBar = ({ pages }) => {
   return (
     <AppBar position="static">
       <Toolbar>
