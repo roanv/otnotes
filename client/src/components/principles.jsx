@@ -7,11 +7,11 @@ export default function Principles() {
   const [principles, setPrinciples] = useState([]);
 
   useEffect(() => {
-    const fetchPrinciples = async () => {
+    const updatePrinciples = async () => {
       const { data } = await axios.get(`${API_URL}/principles`);
       setPrinciples(data);
     };
-    fetchPrinciples();
+    updatePrinciples();
   }, []);
 
   return <>{<List data={principles}></List>}</>;
