@@ -9,8 +9,6 @@ import Principles from "./components/principles";
 class App extends Component {
   state = {
     navPages: ["Notes", "Goals", "Principles"],
-    goals: [],
-    principles: [],
   };
 
   componentDidMount() {
