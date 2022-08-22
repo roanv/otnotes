@@ -19,21 +19,21 @@ export default function App() {
     document.title = "Goats";
   });
 
-  useEffect(() => {
-    const updatePrinciples = async () => {
-      const { data } = await axios.get(`${API_URL}/principles`);
-      setPrinciples(data);
-    };
-    updatePrinciples();
-  }, []);
+  // useEffect(() => {
+  //   const updatePrinciples = async () => {
+  //     const { data } = await axios.get(`${API_URL}/principles`);
+  //     setPrinciples(data);
+  //   };
+  //   updatePrinciples();
+  // }, []);
 
-  useEffect(() => {
-    const updateGoals = async () => {
-      const { data } = await axios.get(`${API_URL}/goals`);
-      setGoals(data);
-    };
-    updateGoals();
-  }, []);
+  // useEffect(() => {
+  //   const updateGoals = async () => {
+  //     const { data } = await axios.get(`${API_URL}/goals`);
+  //     setGoals(data);
+  //   };
+  //   updateGoals();
+  // }, []);
 
   return (
     <React.Fragment>
