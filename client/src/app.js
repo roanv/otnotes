@@ -39,7 +39,10 @@ export default function App() {
       <NavBar pages={pages} />
       <main className="container">
         <Routes>
-          <Route path="/notes" element={<Notes />}></Route>
+          <Route
+            path="/notes"
+            element={<Notes goals={goals} principles={principles} />}
+          ></Route>
           <Route path="/goals" element={<Goals goals={goals} />}></Route>
           <Route
             path="/principles"
