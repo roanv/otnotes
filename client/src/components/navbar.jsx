@@ -34,7 +34,7 @@ const NavBar = ({ pages, window }) => {
   };
 
   useEffect(() => {
-    let title = location.pathname.substring(1);
+    let title = location.pathname.substring(1).toLowerCase();
     title = title.charAt(0).toUpperCase() + title.slice(1);
     setTitle(title);
   }, [location]);
