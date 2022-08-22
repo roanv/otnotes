@@ -41,6 +41,7 @@ const NavBar = ({ pages, window }) => {
   const [selectedIndex, setSelectedIndex] = useState(1);
   const handleListItemClick = (event, index) => {
     setSelectedIndex(index);
+    handleDrawerToggle();
   };
 
   const drawer = (
