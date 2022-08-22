@@ -10,7 +10,7 @@ import API_URL from "./api";
 import axios from "axios";
 
 export default function App() {
-  const [navPages] = useState(["Notes", "Goals", "Principles"]);
+  const [pages] = useState(["Notes", "Goals", "Principles"]);
   const [principles, setPrinciples] = useState([]);
   const [goals, setGoals] = useState([]);
 
@@ -36,7 +36,7 @@ export default function App() {
 
   return (
     <React.Fragment>
-      <NavBar pages={navPages} />
+      <NavBar pages={pages} />
       <main className="container">
         <Routes>
           <Route
