@@ -19,21 +19,21 @@ export default function App() {
     document.title = "Goats";
   });
 
-  // useEffect(() => {
-  //   const updatePrinciples = async () => {
-  //     const { data } = await axios.get(`${API_URL}/principles`);
-  //     setPrinciples(data);
-  //   };
-  //   updatePrinciples();
-  // }, []);
+  useEffect(() => {
+    const updatePrinciples = async () => {
+      const { data } = await axios.get(`${API_URL}/principles`);
+      setPrinciples(data);
+    };
+    updatePrinciples();
+  }, []);
 
-  // useEffect(() => {
-  //   const updateGoals = async () => {
-  //     const { data } = await axios.get(`${API_URL}/goals`);
-  //     setGoals(data);
-  //   };
-  //   updateGoals();
-  // }, []);
+  useEffect(() => {
+    const updateGoals = async () => {
+      const { data } = await axios.get(`${API_URL}/goals`);
+      setGoals(data);
+    };
+    updateGoals();
+  }, []);
 
   return (
     <React.Fragment>
@@ -44,15 +44,13 @@ export default function App() {
             path="/notes"
             element={<Notes goals={goals} principles={principles} />}
           ></Route>
-          <Route
-            path="/goals"
-            element={<Goals goals={goals} setButton={setNavButton} />}
-          ></Route>
+          <Route path="/goals" element={<Goals goals={goals} />}></Route>
           <Route
             path="/principles"
             element={<Principles principles={principles} />}
           ></Route>
           <Route path="/" element={<Navigate replace to="/notes" />} />
+          <Route path="*" element={<Navigate replace to="/" />} />
         </Routes>
       </main>
     </React.Fragment>
