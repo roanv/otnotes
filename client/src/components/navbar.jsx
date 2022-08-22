@@ -4,7 +4,7 @@ import { AppBar, Toolbar, Button, IconButton, Container } from "@mui/material";
 
 import MenuIcon from "@mui/icons-material/Menu";
 
-const NavBar = ({ pages, button }) => {
+const NavBar = ({ pages }) => {
   return (
     <AppBar position="static">
       <Container maxWidth="xl">
@@ -28,7 +28,6 @@ const NavBar = ({ pages, button }) => {
               {page}
             </Button>
           ))}
-          {button}
         </Toolbar>
       </Container>
     </AppBar>

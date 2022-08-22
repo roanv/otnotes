@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 
 import Notes from "./components/notes";
 import Goals from "./components/goals";
@@ -11,7 +11,6 @@ import axios from "axios";
 
 export default function App() {
   const [navPages] = useState(["Notes", "Goals", "Principles"]);
-  const [navButton, setNavButton] = useState();
   const [principles, setPrinciples] = useState([]);
   const [goals, setGoals] = useState([]);
 
@@ -37,7 +36,7 @@ export default function App() {
 
   return (
     <React.Fragment>
-      <NavBar pages={navPages} button={navButton} />
+      <NavBar pages={navPages} />
       <main className="container">
         <Routes>
           <Route
