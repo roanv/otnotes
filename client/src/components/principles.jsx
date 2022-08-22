@@ -3,17 +3,16 @@ import React, { useState, useEffect } from "react";
 import API_URL from "../api";
 import List from "./common/crudList";
 
-function Principles() {
+export default function Principles() {
   const [principles, setPrinciples] = useState([]);
 
   useEffect(() => {
-    async function updatePrinciples() {
-      setPrinciples(await axios.get(`${API_URL}/principles`));
-    }
-    updatePrinciples();
-  });
+    const fetchPrinciples = async () => {
+      const { data } = await axios.get(`${API_URL}/principles`);
+      setPrinciples(data);
+    };
+    fetchPrinciples();
+  }, []);
 
-  return <List data={principles}></List>;
+  return <>{<List data={principles}></List>}</>;
 }
-
-export default Principles;
