@@ -1,25 +1,23 @@
 import axios from "axios";
-import React, { Component } from "react";
+import React, { useState } from "react";
+import { useEffect } from "react";
 import API_URL from "../api";
 import List from "./common/crudList";
 
-class Goals extends Component {
-  state = {
-    goals: [],
-  };
+function Goals() {
+  const [goals, setGoals] = useState([]);
+  useEffect(() => {
+    async function updateGoals() {
+      setGoals(await axios.get(`${API_URL}/goals`));
+    }
+    updateGoals();
+  });
 
-  async componentDidMount() {
-    const { data: goals } = await axios.get(`${API_URL}/goals`);
-    this.setState({ goals });
-  }
-
-  render() {
-    return (
-      <React.Fragment>
-        <List data={this.state.goals}></List>
-      </React.Fragment>
-    );
-  }
+  return (
+    <React.Fragment>
+      <List data={this.state.goals}></List>
+    </React.Fragment>
+  );
 }
 
 export default Goals;
