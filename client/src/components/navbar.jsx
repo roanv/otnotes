@@ -38,9 +38,13 @@ const NavBar = ({ pages, window }) => {
     setTitle(location.pathname.substring(1));
   }, [location]);
 
-  const [selectedIndex, setSelectedIndex] = useState(1);
+  const [selectedIndex, setSelectedIndex] = useState(-1);
+
+  useEffect(() => {
+    setSelectedIndex(pages.indexOf(title));
+  }, [title]);
+
   const handleListItemClick = (event, index) => {
-    setSelectedIndex(index);
     handleDrawerToggle();
   };
 
