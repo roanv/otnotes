@@ -1,6 +1,5 @@
 import axios from "axios";
-import React, { useState } from "react";
-import { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import API_URL from "../api";
 import List from "./common/crudList";
 
@@ -13,11 +12,7 @@ function Goals() {
     updateGoals();
   });
 
-  return (
-    <React.Fragment>
-      <List data={this.state.goals}></List>
-    </React.Fragment>
-  );
+  return <List data={goals}></List>;
 }
 
 export default Goals;

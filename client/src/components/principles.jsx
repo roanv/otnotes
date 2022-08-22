@@ -1,21 +1,19 @@
 import axios from "axios";
-import React, { Component } from "react";
+import React, { useState, useEffect } from "react";
 import API_URL from "../api";
 import List from "./common/crudList";
 
-class Principles extends Component {
-  state = {
-    principles: [],
-  };
+function Principles() {
+  const [principles, setPrinciples] = useState([]);
 
-  async componentDidMount() {
-    const { data: principles } = await axios.get(`${API_URL}/principles`);
-    this.setState({ principles });
-  }
+  useEffect(() => {
+    async function updatePrinciples() {
+      setPrinciples(await axios.get(`${API_URL}/principles`));
+    }
+    updatePrinciples();
+  });
 
-  render() {
-    return <List data={this.state.principles}></List>;
-  }
+  return <List data={principles}></List>;
 }
 
 export default Principles;
