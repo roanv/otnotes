@@ -7,4 +7,10 @@ router.get("/", async (req, res) => {
   res.json(rows.map((goal) => goal.name));
 });
 
+router.post("/", async (req, res) => {
+  await db.query(`INSERT INTO goal (name) VALUES ('${req.body.name}')`);
+  console.log(req.body.name);
+  res.send(req.body.name);
+});
+
 module.exports = router;

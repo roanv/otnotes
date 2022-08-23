@@ -1,27 +1,55 @@
-import { Fab } from "@mui/material";
+import {
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Fab,
+  TextField,
+  Button,
+} from "@mui/material";
 import React, { useState, useEffect } from "react";
 import List from "./common/crudList";
 import AddIcon from "@mui/icons-material/Add";
-import API_URL from "../api.js";
-import axios from "axios";
 import { useTitle } from "../context/title";
+import { fetchGoals, saveGoal } from "../services/goals";
 
 export default function Goals() {
   const [goals, setGoals] = useState([]);
+  const [goal, setGoal] = useState([]);
   const [title, setTitle] = useTitle();
+  const [open, setOpen] = React.useState(false);
 
   useEffect(() => {
     setTitle("Goals");
   });
 
   useEffect(() => {
-    const updateGoals = async () => {
-      const { data } = await axios.get(`${API_URL}/goals`);
+    const update = async () => {
+      const data = await fetchGoals();
       setGoals(data);
     };
-    updateGoals();
+    update();
   }, []);
-  const handleAdd = () => {};
+
+  const handleAdd = () => {
+    saveGoal(goal);
+    setGoals([...goals, goal]);
+    handleClose();
+  };
+
+  const handleOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleChange = (event) => {
+    setGoal(event.target.value);
+  };
+
   return (
     <>
       <List data={goals}></List>
@@ -29,10 +57,30 @@ export default function Goals() {
         sx={{ right: 16, bottom: 16, position: "absolute" }}
         color="primary"
         aria-label="add"
-        onClick={handleAdd()}
+        onClick={handleOpen}
       >
         <AddIcon />
       </Fab>
+      <Dialog open={open} onClose={handleClose}>
+        <DialogTitle>Create New Goal</DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            margin="dense"
+            id="name"
+            label="Goal Name"
+            type="text"
+            fullWidth
+            variant="standard"
+            value={goal}
+            onChange={handleChange}
+          ></TextField>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>Cancel</Button>
+          <Button onClick={handleAdd}>Create</Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 }
