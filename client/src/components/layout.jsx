@@ -89,7 +89,7 @@ export default function Layout({ pages, content, window }) {
         <Toolbar>
           <IconButton
             color="inherit"
-            aria-label="open drawer"
+            aria-label="open navigation drawer"
             edge="start"
             onClick={handleDrawerToggle}
             sx={{ mr: 2, display: { sm: "none" } }}
@@ -104,7 +104,7 @@ export default function Layout({ pages, content, window }) {
       <Box
         component="nav"
         sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
-        aria-label="mailbox folders"
+        aria-label="navigation"
       >
         {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
         <Drawer
