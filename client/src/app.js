@@ -7,12 +7,9 @@ import Principles from "./components/principles";
 import Layout from "./components/layout";
 import NotFound from "./components/notFound";
 import Page from "./objects/page";
+import { TitleProvider } from "./context/title";
 
 export default function App() {
-  useEffect(() => {
-    document.title = "Goats";
-  });
-
   const pages = [
     // new Page("Notes", <Notes goals={goals} principles={principles}></Notes>),
     new Page("Goals", <Goals />),
@@ -31,7 +28,9 @@ export default function App() {
 
   return (
     <>
-      <Layout pages={pages} content={routes} />
+      <TitleProvider>
+        <Layout pages={pages} content={routes} />
+      </TitleProvider>
     </>
   );
 }

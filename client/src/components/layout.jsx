@@ -14,12 +14,14 @@ import MenuIcon from "@mui/icons-material/Menu";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import { Link, useLocation } from "react-router-dom";
+import { useTitle } from "../context/title";
 
 const drawerWidth = 240;
 
 export default function Layout({ pages, content, window }) {
+  const location = useLocation();
   const [mobileOpen, setMobileOpen] = React.useState(false);
-  const [title, setTitle] = useState("");
+  const [title, setTitle] = useTitle();
   const [selectedIndex, setSelectedIndex] = useState(-1);
 
   const handleDrawerToggle = () => {
@@ -30,12 +32,15 @@ export default function Layout({ pages, content, window }) {
     setSelectedIndex(pages.findIndex((page) => page.name === title));
   }, [title, pages]);
 
-  const location = useLocation();
+  // useEffect(() => {
+  //   let newTitle = location.pathname.substring(1).toLowerCase();
+  //   newTitle = newTitle.charAt(0).toUpperCase() + newTitle.slice(1);
+  //   setTitle(newTitle);
+  // }, [location]);
+
   useEffect(() => {
-    let title = location.pathname.substring(1).toLowerCase();
-    title = title.charAt(0).toUpperCase() + title.slice(1);
-    setTitle(title);
-  }, [location]);
+    document.title = title;
+  }, [title]);
 
   const drawer = (
     <div>
