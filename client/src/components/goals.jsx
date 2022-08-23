@@ -33,9 +33,11 @@ export default function Goals() {
   }, []);
 
   const handleAdd = () => {
-    saveGoal(goal);
-    setGoals([...goals, goal]);
-    handleClose();
+    if (goal.length > 0) {
+      saveGoal(goal);
+      setGoals([...goals, goal]);
+      handleClose();
+    }
   };
 
   const handleOpen = () => {
