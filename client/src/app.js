@@ -5,6 +5,7 @@ import Notes from "./components/notes";
 import Goals from "./components/goals";
 import Principles from "./components/principles";
 import Layout from "./components/layout";
+import Page from "./objects/page";
 
 import API_URL from "./api";
 import axios from "axios";
@@ -32,22 +33,6 @@ export default function App() {
     };
     updateGoals();
   }, []);
-
-  function Page(name, element) {
-    this.name = name;
-    this.element = element;
-  }
-
-  Object.defineProperty(Page.prototype, "path", {
-    get: function () {
-      return `/${this.name}`;
-    },
-  });
-  Object.defineProperty(Page.prototype, "key", {
-    get: function () {
-      return `route-${this.name}`;
-    },
-  });
 
   const pages = [
     new Page("Notes", <Notes goals={goals} principles={principles}></Notes>),
