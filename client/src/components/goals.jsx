@@ -33,7 +33,7 @@ export default function Goals() {
   }, []);
 
   const handleAdd = () => {
-    if (goal.length > 0) {
+    if (validInput()) {
       saveGoal(goal);
       setGoals([...goals, goal]);
       handleClose();
@@ -51,6 +51,10 @@ export default function Goals() {
 
   const handleChange = (event) => {
     setGoal(event.target.value);
+  };
+
+  const validInput = () => {
+    return goal.length > 0;
   };
 
   return (
@@ -81,7 +85,9 @@ export default function Goals() {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={handleAdd}>Create</Button>
+          <Button disabled={!validInput()} onClick={handleAdd}>
+            Create
+          </Button>
         </DialogActions>
       </Dialog>
     </>
