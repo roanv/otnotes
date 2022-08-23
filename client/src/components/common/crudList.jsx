@@ -1,12 +1,12 @@
 import { List, ListItem, ListItemButton, ListItemText } from "@mui/material";
 
-export default function DropDown({ data }) {
+export default function DropDown({ data, deleteItem }) {
   return (
     <List sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}>
       {data.map((item) => {
         return (
           <ListItem key={item}>
-            <ListItemButton>
+            <ListItemButton onClick={() => deleteItem(item)}>
               <ListItemText primary={item}></ListItemText>
             </ListItemButton>
           </ListItem>

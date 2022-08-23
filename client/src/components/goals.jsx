@@ -12,7 +12,7 @@ import React, { useState, useEffect } from "react";
 import List from "./common/crudList";
 import AddIcon from "@mui/icons-material/Add";
 import { useTitle } from "../context/title";
-import { getGoals, saveGoal } from "../services/goals";
+import { getGoals, saveGoal, deleteGoal } from "../services/goals";
 import * as yup from "yup";
 
 let schema = yup.object().shape({
@@ -59,6 +59,12 @@ export default function Goals() {
     setNewGoal(event.target.value);
   };
 
+  const handleDelete = (item) => {
+    deleteGoal(item);
+    const index = goals.indexOf(item);
+    setGoals([...goals.slice(0, index), ...goals.slice(index + 1)]);
+  };
+
   useEffect(() => {
     const validate = async () => {
       let result = await schema.isValid({ name: newGoal });
@@ -70,7 +76,7 @@ export default function Goals() {
 
   return (
     <>
-      <List data={goals}></List>
+      <List data={goals} deleteItem={handleDelete}></List>
 
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>Create New Goal</DialogTitle>
