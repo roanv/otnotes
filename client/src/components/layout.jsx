@@ -1,53 +1,41 @@
-import { Link, useLocation } from "react-router-dom";
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 
-import {
-  AppBar,
-  Toolbar,
-  IconButton,
-  Typography,
-  Box,
-  Drawer,
-  Divider,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemText,
-  CssBaseline,
-} from "@mui/material";
-
+import AppBar from "@mui/material/AppBar";
+import Box from "@mui/material/Box";
+import CssBaseline from "@mui/material/CssBaseline";
+import Divider from "@mui/material/Divider";
+import Drawer from "@mui/material/Drawer";
+import IconButton from "@mui/material/IconButton";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemButton from "@mui/material/ListItemButton";
+import ListItemText from "@mui/material/ListItemText";
 import MenuIcon from "@mui/icons-material/Menu";
+import Toolbar from "@mui/material/Toolbar";
+import Typography from "@mui/material/Typography";
+import { Link, useLocation } from "react-router-dom";
 
 const drawerWidth = 240;
 
-const NavBar = ({ pages, window }) => {
-  const location = useLocation();
-  const [title, setTitle] = useState("Goats");
-
-  const [mobileOpen, setMobileOpen] = useState(false);
-
-  const container =
-    window !== undefined ? () => window().document.body : undefined;
+export default function Layout({ pages, content, window }) {
+  const [mobileOpen, setMobileOpen] = React.useState(false);
+  const [title, setTitle] = useState("");
+  const [selectedIndex, setSelectedIndex] = useState(-1);
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
 
   useEffect(() => {
+    setSelectedIndex(pages.indexOf(title));
+  }, [title, pages]);
+
+  const location = useLocation();
+  useEffect(() => {
     let title = location.pathname.substring(1).toLowerCase();
     title = title.charAt(0).toUpperCase() + title.slice(1);
     setTitle(title);
   }, [location]);
-
-  const [selectedIndex, setSelectedIndex] = useState(-1);
-
-  useEffect(() => {
-    setSelectedIndex(pages.indexOf(title));
-  }, [title, pages]);
-
-  const handleListItemClick = (event, index) => {
-    handleDrawerToggle();
-  };
 
   const drawer = (
     <div>
@@ -55,12 +43,11 @@ const NavBar = ({ pages, window }) => {
         <Typography
           variant="h6"
           noWrap
-          component="a"
-          href="/"
+          component={Link}
+          to="/"
           sx={{
-            fontFamily: "fantasy",
-            fontWeight: 500,
-            letterSpacing: ".3rem",
+            fontFamily: "sans-serif",
+            fontWeight: 700,
             color: "inherit",
             textDecoration: "none",
           }}
@@ -69,26 +56,28 @@ const NavBar = ({ pages, window }) => {
         </Typography>
       </Toolbar>
       <Divider />
-      <List component="nav">
+      <List>
         {pages.map((page, index) => (
           <ListItem key={page} disablePadding>
             <ListItemButton
               component={Link}
               to={page}
               selected={selectedIndex === index}
-              onClick={(event) => handleListItemClick(event, index)}
+              onClick={() => handleDrawerToggle()}
             >
               <ListItemText primary={page} />
             </ListItemButton>
           </ListItem>
         ))}
       </List>
-      <Divider />
     </div>
   );
 
+  const container =
+    window !== undefined ? () => window().document.body : undefined;
+
   return (
-    <>
+    <Box sx={{ display: "flex" }}>
       <CssBaseline />
       <AppBar
         position="fixed"
@@ -150,8 +139,17 @@ const NavBar = ({ pages, window }) => {
           {drawer}
         </Drawer>
       </Box>
-    </>
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          p: 3,
+          width: { sm: `calc(100% - ${drawerWidth}px)` },
+        }}
+      >
+        <Toolbar />
+        {content}
+      </Box>
+    </Box>
   );
-};
-
-export default NavBar;
+}
