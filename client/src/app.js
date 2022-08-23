@@ -8,7 +8,6 @@ import Layout from "./components/layout";
 
 import API_URL from "./api";
 import axios from "axios";
-import { Box, Toolbar } from "@mui/material";
 
 export default function App() {
   const [principles, setPrinciples] = useState([]);

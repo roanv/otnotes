@@ -27,7 +27,7 @@ export default function Layout({ pages, content, window }) {
   };
 
   useEffect(() => {
-    setSelectedIndex(pages.findIndex((page) => page.name == title));
+    setSelectedIndex(pages.findIndex((page) => page.name === title));
   }, [title, pages]);
 
   const location = useLocation();
