@@ -43,6 +43,7 @@ export default function Goals() {
   };
 
   const handleClose = () => {
+    setGoal("");
     setOpen(false);
   };
 
