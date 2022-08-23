@@ -1,7 +1,7 @@
 import API_URL from "../api.js";
 import axios from "axios";
 
-export async function fetchGoals() {
+export async function getGoals() {
   const { data } = await axios.get(`${API_URL}/goals`);
   return data;
 }

@@ -12,13 +12,19 @@ import React, { useState, useEffect } from "react";
 import List from "./common/crudList";
 import AddIcon from "@mui/icons-material/Add";
 import { useTitle } from "../context/title";
-import { fetchGoals, saveGoal } from "../services/goals";
+import { getGoals, saveGoal } from "../services/goals";
+import * as yup from "yup";
+
+let schema = yup.object().shape({
+  name: yup.string().required().min(1).max(100),
+});
 
 export default function Goals() {
   const [goals, setGoals] = useState([]);
-  const [goal, setGoal] = useState([]);
+  const [newGoal, setNewGoal] = useState("");
   const [title, setTitle] = useTitle();
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
+  const [validInput, setValidInput] = useState(false);
 
   useEffect(() => {
     setTitle("Goals");
@@ -26,16 +32,16 @@ export default function Goals() {
 
   useEffect(() => {
     const update = async () => {
-      const data = await fetchGoals();
+      const data = await getGoals();
       setGoals(data);
     };
     update();
   }, []);
 
   const handleAdd = () => {
-    if (validInput()) {
-      saveGoal(goal);
-      setGoals([...goals, goal]);
+    if (validInput) {
+      saveGoal(newGoal);
+      setGoals([...goals, newGoal]);
       handleClose();
     }
   };
@@ -45,29 +51,26 @@ export default function Goals() {
   };
 
   const handleClose = () => {
-    setGoal("");
+    setNewGoal("");
     setOpen(false);
   };
 
   const handleChange = (event) => {
-    setGoal(event.target.value);
+    setNewGoal(event.target.value);
   };
 
-  const validInput = () => {
-    return goal.length > 0;
-  };
+  useEffect(() => {
+    const validate = async () => {
+      const result = await schema.isValid({ name: newGoal });
+      setValidInput(result);
+    };
+    validate();
+  }, [newGoal]);
 
   return (
     <>
       <List data={goals}></List>
-      <Fab
-        sx={{ right: 16, bottom: 16, position: "absolute" }}
-        color="primary"
-        aria-label="add"
-        onClick={handleOpen}
-      >
-        <AddIcon />
-      </Fab>
+
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>Create New Goal</DialogTitle>
         <DialogContent>
@@ -79,17 +82,25 @@ export default function Goals() {
             type="text"
             fullWidth
             variant="standard"
-            value={goal}
+            value={newGoal}
             onChange={handleChange}
           ></TextField>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
-          <Button disabled={!validInput()} onClick={handleAdd}>
+          <Button disabled={!validInput} onClick={handleAdd}>
             Create
           </Button>
         </DialogActions>
       </Dialog>
+      <Fab
+        sx={{ right: 16, bottom: 16, position: "absolute" }}
+        color="primary"
+        aria-label="add"
+        onClick={handleOpen}
+      >
+        <AddIcon />
+      </Fab>
     </>
   );
 }
