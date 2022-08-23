@@ -27,7 +27,7 @@ export default function Layout({ pages, content, window }) {
   };
 
   useEffect(() => {
-    setSelectedIndex(pages.indexOf(title));
+    setSelectedIndex(pages.findIndex((page) => page.name == title));
   }, [title, pages]);
 
   const location = useLocation();
@@ -58,14 +58,14 @@ export default function Layout({ pages, content, window }) {
       <Divider />
       <List>
         {pages.map((page, index) => (
-          <ListItem key={page} disablePadding>
+          <ListItem key={page.key} disablePadding>
             <ListItemButton
               component={Link}
-              to={page}
+              to={page.path}
               selected={selectedIndex === index}
               onClick={() => handleDrawerToggle()}
             >
-              <ListItemText primary={page} />
+              <ListItemText primary={page.name} />
             </ListItemButton>
           </ListItem>
         ))}

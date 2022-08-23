@@ -11,7 +11,6 @@ import axios from "axios";
 import { Box, Toolbar } from "@mui/material";
 
 export default function App() {
-  const [pages] = useState(["Notes", "Goals", "Principles"]);
   const [principles, setPrinciples] = useState([]);
   const [goals, setGoals] = useState([]);
 
@@ -35,18 +34,33 @@ export default function App() {
     updateGoals();
   }, []);
 
+  function Page(name, element) {
+    this.name = name;
+    this.element = element;
+  }
+
+  Object.defineProperty(Page.prototype, "path", {
+    get: function () {
+      return `/${this.name}`;
+    },
+  });
+  Object.defineProperty(Page.prototype, "key", {
+    get: function () {
+      return `route-${this.name}`;
+    },
+  });
+
+  const pages = [
+    new Page("Notes", <Notes goals={goals} principles={principles}></Notes>),
+    new Page("Goals", <Goals goals={goals}></Goals>),
+    new Page("Principles", <Principles principles={principles}></Principles>),
+  ];
+
   const routes = (
     <Routes>
-      <Route
-        path="/notes"
-        element={<Notes goals={goals} principles={principles} />}
-      ></Route>
-      <Route path="/goals" element={<Goals goals={goals} />}></Route>
-
-      <Route
-        path="/principles"
-        element={<Principles principles={principles} />}
-      ></Route>
+      {pages.map((page) => (
+        <Route path={page.path} element={page.element} key={page.key} />
+      ))}
       <Route path="/" element={<Navigate replace to="/notes" />} />
       <Route path="*" element={<Navigate replace to="/" />} />
     </Routes>
