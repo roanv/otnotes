@@ -61,7 +61,8 @@ export default function Goals() {
 
   useEffect(() => {
     const validate = async () => {
-      const result = await schema.isValid({ name: newGoal });
+      let result = await schema.isValid({ name: newGoal });
+      if (goals.includes(newGoal)) result = false;
       setValidInput(result);
     };
     validate();
