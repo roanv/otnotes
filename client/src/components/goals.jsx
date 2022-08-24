@@ -114,7 +114,7 @@ export default function Goals() {
       />
 
       <Fab
-        sx={{ right: 16, bottom: 16, position: "absolute" }}
+        sx={{ right: 16, bottom: 16, position: "fixed" }}
         color="primary"
         aria-label="add"
         onClick={() => setCreateDialogOpen(true)}
