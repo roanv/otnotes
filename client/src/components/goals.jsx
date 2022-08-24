@@ -12,6 +12,8 @@ import List from "./common/crudList";
 import AddIcon from "@mui/icons-material/Add";
 import { useTitle } from "../context/title";
 import { getGoals, saveGoal, deleteGoal } from "../services/goals";
+import ContextMenu from "./contextMenu";
+
 import * as yup from "yup";
 
 let schema = yup.object().shape({
@@ -57,6 +59,7 @@ export default function Goals() {
   };
 
   const handleDelete = (item) => {
+    setMenuAnchor(null);
     deleteGoal(item);
     const index = goals.indexOf(item);
     setGoals([...goals.slice(0, index), ...goals.slice(index + 1)]);
@@ -72,9 +75,29 @@ export default function Goals() {
     validate();
   }, [newGoalInput]);
 
+  const [menuAnchor, setMenuAnchor] = useState(null);
+  const [menuItem, setMenuItem] = useState(null);
+  const menuOpen = Boolean(menuAnchor);
+
+  const handleMenuOpen = (event, item) => {
+    setMenuAnchor(event.currentTarget);
+    setMenuItem(item);
+  };
+  const handleMenuClose = () => {
+    setMenuAnchor(null);
+  };
+
   return (
     <>
-      <List data={goals} deleteItem={handleDelete}></List>
+      <List data={goals} openMenu={handleMenuOpen}></List>
+
+      <ContextMenu
+        open={menuOpen}
+        anchor={menuAnchor}
+        item={menuItem}
+        handleDelete={handleDelete}
+        handleClose={handleMenuClose}
+      />
 
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>Create New Goal</DialogTitle>
