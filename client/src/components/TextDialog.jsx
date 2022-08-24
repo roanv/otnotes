@@ -42,29 +42,32 @@ export default function TextDialog({
 
   return (
     <Dialog open={open} onClose={() => setOpen(false)}>
-      <DialogTitle>{title}</DialogTitle>
-      <DialogContent>
-        <TextField
-          autoFocus
-          margin="dense"
-          id="name"
-          label="Goal Name"
-          type="text"
-          fullWidth
-          variant="standard"
-          value={input}
-          onChange={(event) => setInput(event.target.value)}
-        ></TextField>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={() => setOpen(false)}>Cancel</Button>
-        <Button
-          disabled={!validInput}
-          onClick={() => handleConfirm(input, item)}
-        >
-          {confirmText}
-        </Button>
-      </DialogActions>
+      <form onSubmit={(e) => e.preventDefault()}>
+        <DialogTitle>{title}</DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            margin="dense"
+            id="name"
+            label="Goal Name"
+            type="text"
+            fullWidth
+            variant="standard"
+            value={input}
+            onChange={(event) => setInput(event.target.value)}
+          ></TextField>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpen(false)}>Cancel</Button>
+          <Button
+            type="submit"
+            disabled={!validInput}
+            onClick={() => handleConfirm(input, item)}
+          >
+            {confirmText}
+          </Button>
+        </DialogActions>
+      </form>
     </Dialog>
   );
 }
