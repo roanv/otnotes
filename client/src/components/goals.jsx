@@ -29,6 +29,7 @@ export default function Goals() {
   const [menuItem, setMenuItem] = useState(null);
   const menuOpen = Boolean(menuAnchor);
   const [addDialogOpen, setAddDialogOpen] = useState(false);
+  const [updateDialogOpen, setUpdateDialogOpen] = useState(false);
   useEffect(() => {
     setTitle("Goals");
   });
@@ -56,10 +57,10 @@ export default function Goals() {
     setGoals([...goals.slice(0, index), ...goals.slice(index + 1)]);
   };
 
-  const handleUpdate = (item) => {
+  const handleUpdate = (input, item) => {
     async function update() {
       handleMenuClose();
-      const updatedGoal = await updateGoal(item);
+      const updatedGoal = await updateGoal({ id: item.id, name: input });
       const index = goals.indexOf(item);
       setGoals([
         ...goals.slice(0, index),
@@ -68,6 +69,7 @@ export default function Goals() {
       ]);
     }
     update();
+    setUpdateDialogOpen(false);
   };
 
   const handleMenuOpen = (event, item) => {
@@ -78,6 +80,12 @@ export default function Goals() {
     setMenuAnchor(null);
   };
 
+  const openUpdateDialog = (item) => {
+    handleMenuClose();
+    setMenuItem(item);
+    setUpdateDialogOpen(true);
+  };
+
   return (
     <>
       <List data={goals} openMenu={handleMenuOpen}></List>
@@ -86,9 +94,9 @@ export default function Goals() {
         open={menuOpen}
         anchor={menuAnchor}
         item={menuItem}
-        handleDelete={handleDelete}
-        handleUpdate={handleUpdate}
-        handleClose={handleMenuClose}
+        onDelete={handleDelete}
+        onUpdate={openUpdateDialog}
+        onClose={handleMenuClose}
       />
 
       <TextDialog
@@ -96,8 +104,19 @@ export default function Goals() {
         open={addDialogOpen}
         items={goals}
         setOpen={setAddDialogOpen}
-        handleAdd={handleAdd}
-        value=""
+        handleConfirm={handleAdd}
+        title="Create New Goal"
+        confirmText="Create"
+      />
+      <TextDialog
+        schema={schema}
+        open={updateDialogOpen}
+        setOpen={setUpdateDialogOpen}
+        item={menuItem}
+        items={goals}
+        handleConfirm={handleUpdate}
+        title={"Editing Goal"}
+        confirmText="Update"
       />
 
       <Fab

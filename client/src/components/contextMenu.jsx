@@ -12,22 +12,22 @@ export default function ContextMenu({
   open,
   anchor,
   item,
-  handleDelete,
-  handleClose,
-  handleUpdate,
+  onDelete,
+  onClose,
+  onUpdate,
 }) {
   return (
-    <Menu anchorEl={anchor} open={open} onClose={handleClose}>
+    <Menu anchorEl={anchor} open={open} onClose={onClose}>
       <MenuItem
         onClick={() => {
-          handleDelete(item);
+          onDelete(item);
         }}
       >
         Delete
       </MenuItem>
       <MenuItem
         onClick={() => {
-          handleUpdate(item);
+          onUpdate(item);
         }}
       >
         Edit

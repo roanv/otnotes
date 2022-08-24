@@ -10,10 +10,12 @@ import {
 export default function TextDialog({
   schema,
   items,
-  handleAdd,
+  item,
+  handleConfirm,
   open,
   setOpen,
-  value,
+  title,
+  confirmText,
 }) {
   const [input, setInput] = useState("");
   const [validInput, setValidInput] = useState(false);
@@ -29,13 +31,13 @@ export default function TextDialog({
   }, [input]);
 
   useEffect(() => {
-    if (open) setInput(value);
-    else setInput("");
+    if (open && item) setInput(item.name);
+    if (!open) setInput("");
   }, [open]);
 
   return (
     <Dialog open={open} onClose={() => setOpen(false)}>
-      <DialogTitle>Create New Goal</DialogTitle>
+      <DialogTitle>{title}</DialogTitle>
       <DialogContent>
         <TextField
           autoFocus
@@ -51,8 +53,11 @@ export default function TextDialog({
       </DialogContent>
       <DialogActions>
         <Button onClick={() => setOpen(false)}>Cancel</Button>
-        <Button disabled={!validInput} onClick={() => handleAdd(input)}>
-          Create
+        <Button
+          disabled={!validInput}
+          onClick={() => handleConfirm(input, item)}
+        >
+          {confirmText}
         </Button>
       </DialogActions>
     </Dialog>
