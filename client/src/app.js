@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 
 import Notes from "./components/notes";

@@ -2,7 +2,6 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
-  DialogContentText,
   DialogTitle,
   Fab,
   TextField,
@@ -21,7 +20,7 @@ let schema = yup.object().shape({
 
 export default function Goals() {
   const [goals, setGoals] = useState([]);
-  const [newGoalName, setNewGoalName] = useState("");
+  const [newGoalInput, setNewGoalInput] = useState("");
   const [title, setTitle] = useTitle();
   const [open, setOpen] = useState(false);
   const [validInput, setValidInput] = useState(false);
@@ -40,8 +39,7 @@ export default function Goals() {
   const handleAdd = () => {
     async function save() {
       if (validInput) {
-        const newGoal = await saveGoal({ name: newGoalName });
-        console.log(newGoal);
+        const newGoal = await saveGoal({ name: newGoalInput });
         setGoals([newGoal, ...goals]);
       }
     }
@@ -54,34 +52,25 @@ export default function Goals() {
   };
 
   const handleClose = () => {
-    setNewGoalName("");
+    setNewGoalInput("");
     setOpen(false);
-  };
-
-  const handleChange = (event) => {
-    setNewGoalName(event.target.value);
   };
 
   const handleDelete = (item) => {
     deleteGoal(item);
-    let index = null;
-    goals.find((goal, i) => {
-      if (goal.id === item.id) {
-        index = i;
-      }
-    });
-
+    const index = goals.indexOf(item);
     setGoals([...goals.slice(0, index), ...goals.slice(index + 1)]);
   };
 
   useEffect(() => {
     const validate = async () => {
-      let result = await schema.isValid({ name: newGoalName });
-      //if (goals.includes(newGoal)) result = false;
+      const newGoal = { name: newGoalInput };
+      let result = await schema.isValid(newGoal);
+      if (goals.find((goal) => goal.name === newGoal.name)) result = false;
       setValidInput(result);
     };
     validate();
-  }, [newGoalName]);
+  }, [newGoalInput]);
 
   return (
     <>
@@ -98,8 +87,8 @@ export default function Goals() {
             type="text"
             fullWidth
             variant="standard"
-            value={newGoalName}
-            onChange={handleChange}
+            value={newGoalInput}
+            onChange={(event) => setNewGoalInput(event.target.value)}
           ></TextField>
         </DialogContent>
         <DialogActions>
