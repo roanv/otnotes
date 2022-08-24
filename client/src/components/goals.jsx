@@ -23,14 +23,12 @@ let schema = yup.object().shape({
 
 export default function Goals() {
   const [goals, setGoals] = useState([]);
-  const [newGoalInput, setNewGoalInput] = useState("");
+
   const [title, setTitle] = useTitle();
-  const [open, setOpen] = useState(false);
-  const [validInput, setValidInput] = useState(false);
   const [menuAnchor, setMenuAnchor] = useState(null);
   const [menuItem, setMenuItem] = useState(null);
   const menuOpen = Boolean(menuAnchor);
-
+  const [addDialogOpen, setAddDialogOpen] = useState(false);
   useEffect(() => {
     setTitle("Goals");
   });
@@ -42,34 +40,13 @@ export default function Goals() {
     update();
   }, []);
 
-  useEffect(() => {
-    const validate = async () => {
-      const newGoal = { name: newGoalInput };
-      let result = await schema.isValid(newGoal);
-      if (goals.find((goal) => goal.name === newGoal.name)) result = false;
-      setValidInput(result);
-    };
-    validate();
-  }, [newGoalInput]);
-
-  const handleOpen = () => {
-    setOpen(true);
-  };
-
-  const handleCloseDialog = () => {
-    setNewGoalInput("");
-    setOpen(false);
-  };
-
-  const handleAdd = () => {
+  const handleAdd = (input) => {
     async function save() {
-      if (validInput) {
-        const newGoal = await saveGoal({ name: newGoalInput });
-        setGoals([newGoal, ...goals]);
-      }
+      const newGoal = await saveGoal({ name: input });
+      setGoals([newGoal, ...goals]);
     }
     save();
-    handleCloseDialog();
+    setAddDialogOpen(false);
   };
 
   const handleDelete = (item) => {
@@ -101,11 +78,6 @@ export default function Goals() {
     setMenuAnchor(null);
   };
 
-  const handleInputChange = (event) => {
-    console.log(event.target.value);
-    setNewGoalInput(event.target.value);
-  };
-
   return (
     <>
       <List data={goals} openMenu={handleMenuOpen}></List>
@@ -120,19 +92,19 @@ export default function Goals() {
       />
 
       <TextDialog
-        open={open}
-        handleClose={handleCloseDialog}
-        newGoalInput={newGoalInput}
+        schema={schema}
+        open={addDialogOpen}
+        items={goals}
+        setOpen={setAddDialogOpen}
         handleAdd={handleAdd}
-        handleInput={handleInputChange}
-        validInput={validInput}
+        value=""
       />
 
       <Fab
         sx={{ right: 16, bottom: 16, position: "absolute" }}
         color="primary"
         aria-label="add"
-        onClick={handleOpen}
+        onClick={() => setAddDialogOpen(true)}
       >
         <AddIcon />
       </Fab>

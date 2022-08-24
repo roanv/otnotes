@@ -4,20 +4,37 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  Fab,
   TextField,
   Button,
 } from "@mui/material";
 export default function TextDialog({
-  open,
-  handleClose,
-  newGoalInput,
+  schema,
+  items,
   handleAdd,
-  handleInput,
-  validInput,
+  open,
+  setOpen,
+  value,
 }) {
+  const [input, setInput] = useState("");
+  const [validInput, setValidInput] = useState(false);
+
+  useEffect(() => {
+    const validate = async () => {
+      const newItem = { name: input };
+      let result = await schema.isValid(newItem);
+      if (items.find((item) => item.name === newItem.name)) result = false;
+      setValidInput(result);
+    };
+    validate();
+  }, [input]);
+
+  useEffect(() => {
+    if (open) setInput(value);
+    else setInput("");
+  }, [open]);
+
   return (
-    <Dialog open={open} onClose={handleClose}>
+    <Dialog open={open} onClose={() => setOpen(false)}>
       <DialogTitle>Create New Goal</DialogTitle>
       <DialogContent>
         <TextField
@@ -28,13 +45,13 @@ export default function TextDialog({
           type="text"
           fullWidth
           variant="standard"
-          value={newGoalInput}
-          onChange={(event) => handleInput(event)}
+          value={input}
+          onChange={(event) => setInput(event.target.value)}
         ></TextField>
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleClose}>Cancel</Button>
-        <Button disabled={!validInput} onClick={handleAdd}>
+        <Button onClick={() => setOpen(false)}>Cancel</Button>
+        <Button disabled={!validInput} onClick={() => handleAdd(input)}>
           Create
         </Button>
       </DialogActions>
