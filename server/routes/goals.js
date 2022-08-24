@@ -9,23 +9,31 @@ router.get("/", async (req, res) => {
 
 router.post("/", async (req, res) => {
   const { name } = req.body;
-  const result = await db.query(
+  const { rows } = await db.query(
     `INSERT INTO goal (name) VALUES ('${name}') RETURNING *`
   );
-  res.send(result.rows[0]);
+  res.send(rows[0]);
 });
 
 router.get("/:id", async (req, res) => {
-  const { rows } = await db.query(
-    `SELECT * FROM goal WHERE id='${req.params.id}'`
-  );
-  res.json(rows);
+  const { id } = req.params;
+  const { rows } = await db.query(`SELECT * FROM goal WHERE id='${id}'`);
+  res.json(rows[0]);
 });
 
 router.delete("/:id", async (req, res) => {
   const { id } = req.params;
-  await db.query(`DELETE FROM goal WHERE id='${req.params.id}'`);
-  res.send(id);
+  const { rows } = await db.query(`DELETE FROM goal WHERE id='${id}'`);
+  res.send(rows[0]);
+});
+
+router.put("/:id", async (req, res) => {
+  const { name } = req.body;
+  const { id } = req.params;
+  const { rows } = await db.query(
+    `UPDATE goal SET name='${name}' WHERE id='${id}' RETURNING *`
+  );
+  res.send(rows[0]);
 });
 
 module.exports = router;

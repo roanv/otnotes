@@ -20,3 +20,10 @@ export async function deleteGoal(goal) {
   const { data } = await axios.delete(`${API_URL}/goals/${goal.id}`);
   return data;
 }
+
+export async function updateGoal(goal) {
+  const { data } = await axios.put(`${API_URL}/goals/${goal.id}`, {
+    name: goal.name,
+  });
+  return data;
+}

@@ -11,10 +11,11 @@ import React, { useState, useEffect } from "react";
 import List from "./common/crudList";
 import AddIcon from "@mui/icons-material/Add";
 import { useTitle } from "../context/title";
-import { getGoals, saveGoal, deleteGoal } from "../services/goals";
+import { getGoals, saveGoal, deleteGoal, updateGoal } from "../services/goals";
 import ContextMenu from "./contextMenu";
 
 import * as yup from "yup";
+import TextDialog from "./TextDialog";
 
 let schema = yup.object().shape({
   name: yup.string().required().min(1).max(100),
@@ -26,6 +27,9 @@ export default function Goals() {
   const [title, setTitle] = useTitle();
   const [open, setOpen] = useState(false);
   const [validInput, setValidInput] = useState(false);
+  const [menuAnchor, setMenuAnchor] = useState(null);
+  const [menuItem, setMenuItem] = useState(null);
+  const menuOpen = Boolean(menuAnchor);
 
   useEffect(() => {
     setTitle("Goals");
@@ -38,33 +42,6 @@ export default function Goals() {
     update();
   }, []);
 
-  const handleAdd = () => {
-    async function save() {
-      if (validInput) {
-        const newGoal = await saveGoal({ name: newGoalInput });
-        setGoals([newGoal, ...goals]);
-      }
-    }
-    save();
-    handleClose();
-  };
-
-  const handleOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setNewGoalInput("");
-    setOpen(false);
-  };
-
-  const handleDelete = (item) => {
-    setMenuAnchor(null);
-    deleteGoal(item);
-    const index = goals.indexOf(item);
-    setGoals([...goals.slice(0, index), ...goals.slice(index + 1)]);
-  };
-
   useEffect(() => {
     const validate = async () => {
       const newGoal = { name: newGoalInput };
@@ -75,9 +52,46 @@ export default function Goals() {
     validate();
   }, [newGoalInput]);
 
-  const [menuAnchor, setMenuAnchor] = useState(null);
-  const [menuItem, setMenuItem] = useState(null);
-  const menuOpen = Boolean(menuAnchor);
+  const handleOpen = () => {
+    setOpen(true);
+  };
+
+  const handleCloseDialog = () => {
+    setNewGoalInput("");
+    setOpen(false);
+  };
+
+  const handleAdd = () => {
+    async function save() {
+      if (validInput) {
+        const newGoal = await saveGoal({ name: newGoalInput });
+        setGoals([newGoal, ...goals]);
+      }
+    }
+    save();
+    handleCloseDialog();
+  };
+
+  const handleDelete = (item) => {
+    handleMenuClose();
+    deleteGoal(item);
+    const index = goals.indexOf(item);
+    setGoals([...goals.slice(0, index), ...goals.slice(index + 1)]);
+  };
+
+  const handleUpdate = (item) => {
+    async function update() {
+      handleMenuClose();
+      const updatedGoal = await updateGoal(item);
+      const index = goals.indexOf(item);
+      setGoals([
+        ...goals.slice(0, index),
+        updatedGoal,
+        ...goals.slice(index + 1),
+      ]);
+    }
+    update();
+  };
 
   const handleMenuOpen = (event, item) => {
     setMenuAnchor(event.currentTarget);
@@ -85,6 +99,11 @@ export default function Goals() {
   };
   const handleMenuClose = () => {
     setMenuAnchor(null);
+  };
+
+  const handleInputChange = (event) => {
+    console.log(event.target.value);
+    setNewGoalInput(event.target.value);
   };
 
   return (
@@ -96,31 +115,19 @@ export default function Goals() {
         anchor={menuAnchor}
         item={menuItem}
         handleDelete={handleDelete}
+        handleUpdate={handleUpdate}
         handleClose={handleMenuClose}
       />
 
-      <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>Create New Goal</DialogTitle>
-        <DialogContent>
-          <TextField
-            autoFocus
-            margin="dense"
-            id="name"
-            label="Goal Name"
-            type="text"
-            fullWidth
-            variant="standard"
-            value={newGoalInput}
-            onChange={(event) => setNewGoalInput(event.target.value)}
-          ></TextField>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose}>Cancel</Button>
-          <Button disabled={!validInput} onClick={handleAdd}>
-            Create
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <TextDialog
+        open={open}
+        handleClose={handleCloseDialog}
+        newGoalInput={newGoalInput}
+        handleAdd={handleAdd}
+        handleInput={handleInputChange}
+        validInput={validInput}
+      />
+
       <Fab
         sx={{ right: 16, bottom: 16, position: "absolute" }}
         color="primary"
