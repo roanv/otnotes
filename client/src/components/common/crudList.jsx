@@ -5,9 +5,9 @@ export default function DropDown({ data, deleteItem }) {
     <List sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}>
       {data.map((item) => {
         return (
-          <ListItem key={item}>
+          <ListItem key={item.id}>
             <ListItemButton onClick={() => deleteItem(item)}>
-              <ListItemText primary={item}></ListItemText>
+              <ListItemText primary={item.name}></ListItemText>
             </ListItemButton>
           </ListItem>
         );

@@ -13,7 +13,7 @@ export default function App() {
   const pages = [
     // new Page("Notes", <Notes goals={goals} principles={principles}></Notes>),
     new Page("Goals", <Goals />),
-    new Page("Principles", <Principles />),
+    // new Page("Principles", <Principles />),
   ];
 
   const routes = (

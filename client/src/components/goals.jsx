@@ -21,7 +21,7 @@ let schema = yup.object().shape({
 
 export default function Goals() {
   const [goals, setGoals] = useState([]);
-  const [newGoal, setNewGoal] = useState("");
+  const [newGoalName, setNewGoalName] = useState("");
   const [title, setTitle] = useTitle();
   const [open, setOpen] = useState(false);
   const [validInput, setValidInput] = useState(false);
@@ -32,18 +32,21 @@ export default function Goals() {
 
   useEffect(() => {
     const update = async () => {
-      const data = await getGoals();
-      setGoals(data);
+      setGoals(await getGoals());
     };
     update();
   }, []);
 
   const handleAdd = () => {
-    if (validInput) {
-      saveGoal(newGoal);
-      setGoals([...goals, newGoal]);
-      handleClose();
+    async function save() {
+      if (validInput) {
+        const newGoal = await saveGoal({ name: newGoalName });
+        console.log(newGoal);
+        setGoals([newGoal, ...goals]);
+      }
     }
+    save();
+    handleClose();
   };
 
   const handleOpen = () => {
@@ -51,28 +54,34 @@ export default function Goals() {
   };
 
   const handleClose = () => {
-    setNewGoal("");
+    setNewGoalName("");
     setOpen(false);
   };
 
   const handleChange = (event) => {
-    setNewGoal(event.target.value);
+    setNewGoalName(event.target.value);
   };
 
   const handleDelete = (item) => {
     deleteGoal(item);
-    const index = goals.indexOf(item);
+    let index = null;
+    goals.find((goal, i) => {
+      if (goal.id === item.id) {
+        index = i;
+      }
+    });
+
     setGoals([...goals.slice(0, index), ...goals.slice(index + 1)]);
   };
 
   useEffect(() => {
     const validate = async () => {
-      let result = await schema.isValid({ name: newGoal });
-      if (goals.includes(newGoal)) result = false;
+      let result = await schema.isValid({ name: newGoalName });
+      //if (goals.includes(newGoal)) result = false;
       setValidInput(result);
     };
     validate();
-  }, [newGoal]);
+  }, [newGoalName]);
 
   return (
     <>
@@ -89,7 +98,7 @@ export default function Goals() {
             type="text"
             fullWidth
             variant="standard"
-            value={newGoal}
+            value={newGoalName}
             onChange={handleChange}
           ></TextField>
         </DialogContent>

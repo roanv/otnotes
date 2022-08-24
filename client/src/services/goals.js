@@ -3,19 +3,20 @@ import axios from "axios";
 
 export async function getGoals() {
   const { data } = await axios.get(`${API_URL}/goals`);
-  return data.map((goal) => goal.name);
-}
-
-export async function saveGoal(goal) {
-  await axios.post(`${API_URL}/goals`, { id: goal });
-}
-
-export async function getGoal(id) {
-  const { data } = await axios.get(`${API_URL}/goals/${id}`);
   return data;
 }
 
-export async function deleteGoal(id) {
-  const { data } = await axios.delete(`${API_URL}/goals/${id}`);
+export async function saveGoal(goal) {
+  const { data } = await axios.post(`${API_URL}/goals`, { name: goal.name });
+  return data;
+}
+
+export async function getGoal(goal) {
+  const { data } = await axios.get(`${API_URL}/goals/${goal.id}`);
+  return data;
+}
+
+export async function deleteGoal(goal) {
+  const { data } = await axios.delete(`${API_URL}/goals/${goal.id}`);
   return data;
 }
