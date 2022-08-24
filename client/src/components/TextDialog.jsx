@@ -24,7 +24,12 @@ export default function TextDialog({
     const validate = async () => {
       const newItem = { name: input };
       let result = await schema.isValid(newItem);
-      if (items.find((item) => item.name === newItem.name)) result = false;
+      if (
+        items.find(
+          (item) => item.name.toLowerCase() === newItem.name.toLowerCase()
+        )
+      )
+        result = false;
       setValidInput(result);
     };
     validate();
