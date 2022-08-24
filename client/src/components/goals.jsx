@@ -25,11 +25,14 @@ export default function Goals() {
   const [goals, setGoals] = useState([]);
 
   const [title, setTitle] = useTitle();
-  const [menuAnchor, setMenuAnchor] = useState(null);
-  const [menuItem, setMenuItem] = useState(null);
-  const menuOpen = Boolean(menuAnchor);
-  const [addDialogOpen, setAddDialogOpen] = useState(false);
+
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [selectedAnchor, setSelectedAnchor] = useState(null);
+
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [updateDialogOpen, setUpdateDialogOpen] = useState(false);
+  const [contextMenuOpen, setContextMenuOpen] = useState(false);
+
   useEffect(() => {
     setTitle("Goals");
   });
@@ -47,19 +50,12 @@ export default function Goals() {
       setGoals([newGoal, ...goals]);
     }
     save();
-    setAddDialogOpen(false);
-  };
-
-  const handleDelete = (item) => {
-    handleMenuClose();
-    deleteGoal(item);
-    const index = goals.indexOf(item);
-    setGoals([...goals.slice(0, index), ...goals.slice(index + 1)]);
+    setCreateDialogOpen(false);
   };
 
   const handleUpdate = (input, item) => {
     async function update() {
-      handleMenuClose();
+      setContextMenuOpen(false);
       const updatedGoal = await updateGoal({ id: item.id, name: input });
       const index = goals.indexOf(item);
       setGoals([
@@ -72,58 +68,56 @@ export default function Goals() {
     setUpdateDialogOpen(false);
   };
 
-  const handleMenuOpen = (event, item) => {
-    setMenuAnchor(event.currentTarget);
-    setMenuItem(item);
-  };
-  const handleMenuClose = () => {
-    setMenuAnchor(null);
+  const handleDelete = (item) => {
+    deleteGoal(item);
+    const index = goals.indexOf(item);
+    setGoals([...goals.slice(0, index), ...goals.slice(index + 1)]);
   };
 
-  const openUpdateDialog = (item) => {
-    handleMenuClose();
-    setMenuItem(item);
-    setUpdateDialogOpen(true);
+  const handleOpenContextMenu = (event, item) => {
+    setSelectedAnchor(event.currentTarget);
+    setSelectedItem(item);
+    setContextMenuOpen(true);
   };
 
   return (
     <>
-      <List data={goals} openMenu={handleMenuOpen}></List>
+      <List data={goals} openMenu={handleOpenContextMenu}></List>
 
       <ContextMenu
-        open={menuOpen}
-        anchor={menuAnchor}
-        item={menuItem}
-        onDelete={handleDelete}
-        onUpdate={openUpdateDialog}
-        onClose={handleMenuClose}
-      />
-
-      <TextDialog
-        schema={schema}
-        open={addDialogOpen}
-        items={goals}
-        setOpen={setAddDialogOpen}
-        handleConfirm={handleAdd}
-        title="Create New Goal"
-        confirmText="Create"
+        open={contextMenuOpen}
+        setOpen={setContextMenuOpen}
+        anchor={selectedAnchor}
+        item={selectedItem}
+        onUpdate={() => setUpdateDialogOpen(true)}
+        onDelete={(item) => handleDelete(item)}
+        onClose={setContextMenuOpen}
       />
       <TextDialog
         schema={schema}
         open={updateDialogOpen}
         setOpen={setUpdateDialogOpen}
-        item={menuItem}
+        item={selectedItem}
         items={goals}
         handleConfirm={handleUpdate}
         title={"Editing Goal"}
         confirmText="Update"
+      />
+      <TextDialog
+        schema={schema}
+        open={createDialogOpen}
+        items={goals}
+        setOpen={setCreateDialogOpen}
+        handleConfirm={handleAdd}
+        title="Create New Goal"
+        confirmText="Create"
       />
 
       <Fab
         sx={{ right: 16, bottom: 16, position: "absolute" }}
         color="primary"
         aria-label="add"
-        onClick={() => setAddDialogOpen(true)}
+        onClick={() => setCreateDialogOpen(true)}
       >
         <AddIcon />
       </Fab>

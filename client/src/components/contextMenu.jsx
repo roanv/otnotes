@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from "react";
 import {
   IconButton,
   List,
@@ -10,27 +11,29 @@ import {
 
 export default function ContextMenu({
   open,
-  anchor,
+  setOpen,
   item,
+  anchor,
   onDelete,
-  onClose,
   onUpdate,
 }) {
   return (
-    <Menu anchorEl={anchor} open={open} onClose={onClose}>
+    <Menu anchorEl={anchor} open={open} onClose={() => setOpen(false)}>
       <MenuItem
         onClick={() => {
-          onDelete(item);
-        }}
-      >
-        Delete
-      </MenuItem>
-      <MenuItem
-        onClick={() => {
+          setOpen(false);
           onUpdate(item);
         }}
       >
         Edit
+      </MenuItem>
+      <MenuItem
+        onClick={() => {
+          setOpen(false);
+          onDelete(item);
+        }}
+      >
+        Delete
       </MenuItem>
     </Menu>
   );
