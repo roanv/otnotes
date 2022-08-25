@@ -68,14 +68,15 @@ export default function Goals() {
       } catch (error) {
         console.log(error.message);
       }
+      setSelectedGoal(null);
       setLoading(false);
     }
     save();
   };
 
   const handleUpdate = () => {
+    closeDialog();
     async function update() {
-      closeDialog();
       setLoading(true);
       try {
         const updateGoal = { id: selectedGoal.id, name: input };
@@ -85,6 +86,7 @@ export default function Goals() {
       } catch (error) {
         console.log(error.message);
       }
+      setSelectedGoal(null);
       setLoading(false);
     }
     update();
@@ -100,6 +102,7 @@ export default function Goals() {
       } catch (error) {
         console.log(error);
       }
+      setSelectedGoal(null);
       setLoading(false);
     }
     remove();
@@ -112,8 +115,8 @@ export default function Goals() {
   };
 
   function openDialog(mode) {
-    setDialogOpen(true);
     setDialogMode(mode);
+    setDialogOpen(true);
     if (mode == "Edit") setInput(selectedGoal.name);
     else setInput("");
   }
@@ -131,14 +134,12 @@ export default function Goals() {
   useEffect(() => {
     const validate = async () => {
       const newGoal = { name: input };
-      let result = await schema.isValid(newGoal);
-      if (
-        goals.find(
-          (goal) => goal.name.toLowerCase() === newGoal.name.toLowerCase()
-        )
-      )
-        result = false;
-      setValidInput(result);
+      let valid = await schema.isValid(newGoal);
+      const goalInList = goals.find(
+        (goal) => goal.name.toLowerCase() === newGoal.name.toLowerCase()
+      );
+      if (goalInList) valid = false;
+      setValidInput(valid);
     };
     validate();
   }, [input]);
@@ -153,7 +154,7 @@ export default function Goals() {
         anchor={menuAnchor}
         item={selectedGoal}
         onUpdate={() => openDialog("Edit")}
-        onDelete={(item) => handleRemove(item)}
+        onDelete={handleRemove}
         onClose={setContextMenuOpen}
       />
       <TextDialog
