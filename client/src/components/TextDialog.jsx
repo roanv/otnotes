@@ -15,12 +15,12 @@ export default function TextDialog({
   open,
   close,
   title,
-  confirmText,
+  dialogMode,
 }) {
   return (
     <Dialog open={open} onClose={() => close(false)}>
       <form onSubmit={(e) => e.preventDefault()}>
-        <DialogTitle>{title}</DialogTitle>
+        <DialogTitle>{`${dialogMode} ${title}`}</DialogTitle>
         <DialogContent>
           <TextField
             autoFocus
@@ -37,7 +37,7 @@ export default function TextDialog({
         <DialogActions>
           <Button onClick={() => close(false)}>Cancel</Button>
           <Button type="submit" disabled={!validInput} onClick={handleConfirm}>
-            {confirmText}
+            Confirm
           </Button>
         </DialogActions>
       </form>

@@ -48,7 +48,8 @@ export default function Goals() {
     const update = async () => {
       setLoading(true);
       try {
-        setGoals(await GoalAPI.fetch());
+        const newGoals = await GoalAPI.fetch();
+        setGoals(sort(newGoals));
       } catch (error) {
         console.log(error.message);
       }
@@ -57,6 +58,19 @@ export default function Goals() {
     update();
   }, []);
 
+  useEffect(() => {
+    const validate = async () => {
+      const newGoal = { name: input };
+      let valid = await schema.isValid(newGoal);
+      const goalInList = goals.find(
+        (goal) => goal.name.toLowerCase() === newGoal.name.toLowerCase()
+      );
+      if (goalInList) valid = false;
+      setValidInput(valid);
+    };
+    validate();
+  }, [input]);
+
   const handleCreate = () => {
     closeDialog();
     async function save() {
@@ -64,7 +78,7 @@ export default function Goals() {
       try {
         const newGoal = { name: input };
         const [result] = await GoalAPI.create(newGoal);
-        setGoals([result, ...goals]);
+        setGoals(sort([result, ...goals]));
       } catch (error) {
         console.log(error.message);
       }
@@ -82,7 +96,12 @@ export default function Goals() {
         const updateGoal = { id: selectedGoal.id, name: input };
         const [result] = await GoalAPI.update(updateGoal);
         const index = goals.indexOf(selectedGoal);
-        setGoals([...goals.slice(0, index), result, ...goals.slice(index + 1)]);
+        const newGoals = [
+          ...goals.slice(0, index),
+          result,
+          ...goals.slice(index + 1),
+        ];
+        setGoals(sort(newGoals));
       } catch (error) {
         console.log(error.message);
       }
@@ -92,13 +111,18 @@ export default function Goals() {
     update();
   };
 
+  function sort(list) {
+    return list.sort((a, b) => a.name > b.name);
+  }
+
   const handleRemove = () => {
     async function remove() {
       setLoading(true);
       try {
         const [result] = await GoalAPI.remove(selectedGoal);
         const index = goals.indexOf(selectedGoal);
-        setGoals([...goals.slice(0, index), ...goals.slice(index + 1)]);
+        const newGoals = [...goals.slice(0, index), ...goals.slice(index + 1)];
+        setGoals(sort(newGoals));
       } catch (error) {
         console.log(error);
       }
@@ -131,19 +155,6 @@ export default function Goals() {
     Delete: handleRemove,
   };
 
-  useEffect(() => {
-    const validate = async () => {
-      const newGoal = { name: input };
-      let valid = await schema.isValid(newGoal);
-      const goalInList = goals.find(
-        (goal) => goal.name.toLowerCase() === newGoal.name.toLowerCase()
-      );
-      if (goalInList) valid = false;
-      setValidInput(valid);
-    };
-    validate();
-  }, [input]);
-
   return (
     <>
       <List data={goals} openMenu={handleOpenContextMenu}></List>
@@ -164,8 +175,8 @@ export default function Goals() {
         open={dialogOpen}
         close={closeDialog}
         handleConfirm={dialogHandlers[dialogMode]}
-        title={`${dialogMode} Goal`}
-        confirmText={dialogMode}
+        title={`Goal`}
+        dialogMode={dialogMode}
       />
 
       <Fab
