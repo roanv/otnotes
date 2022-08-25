@@ -49,7 +49,8 @@ export default function Goals() {
       setLoading(true);
       try {
         const newGoals = await GoalAPI.fetch();
-        setGoals(sort(newGoals));
+        newGoals.sort((a, b) => a.name > b.name);
+        setGoals(newGoals);
       } catch (error) {
         console.log(error.message);
       }
@@ -78,7 +79,9 @@ export default function Goals() {
       try {
         const newGoal = { name: input };
         const [result] = await GoalAPI.create(newGoal);
-        setGoals(sort([result, ...goals]));
+        const newGoals = [result, ...goals];
+        newGoals.sort((a, b) => a.name > b.name);
+        setGoals(newGoals);
       } catch (error) {
         console.log(error.message);
       }
@@ -101,7 +104,8 @@ export default function Goals() {
           result,
           ...goals.slice(index + 1),
         ];
-        setGoals(sort(newGoals));
+        newGoals.sort((a, b) => a.name > b.name);
+        setGoals(newGoals);
       } catch (error) {
         console.log(error.message);
       }
@@ -111,10 +115,6 @@ export default function Goals() {
     update();
   };
 
-  function sort(list) {
-    return list.sort((a, b) => a.name > b.name);
-  }
-
   const handleRemove = () => {
     async function remove() {
       setLoading(true);
@@ -122,7 +122,8 @@ export default function Goals() {
         const [result] = await GoalAPI.remove(selectedGoal);
         const index = goals.indexOf(selectedGoal);
         const newGoals = [...goals.slice(0, index), ...goals.slice(index + 1)];
-        setGoals(sort(newGoals));
+        newGoals.sort((a, b) => a.name > b.name);
+        setGoals(newGoals);
       } catch (error) {
         console.log(error);
       }
