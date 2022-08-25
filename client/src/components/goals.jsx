@@ -6,6 +6,9 @@ import {
   Fab,
   TextField,
   Button,
+  Backdrop,
+  CircularProgress,
+  Box,
 } from "@mui/material";
 import React, { useState, useEffect } from "react";
 import List from "./common/crudList";
@@ -32,6 +35,7 @@ export default function Goals() {
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [updateDialogOpen, setUpdateDialogOpen] = useState(false);
   const [contextMenuOpen, setContextMenuOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     setTitle("Goals");
@@ -39,33 +43,40 @@ export default function Goals() {
 
   useEffect(() => {
     const update = async () => {
-      setGoals(await getGoals());
+      setLoading(true);
+      const result = await getGoals();
+      if (result.error) console.error(result.error.message);
+      else setGoals(result);
+      setLoading(false);
     };
     update();
   }, []);
 
   const handleAdd = (input) => {
     async function save() {
-      const newGoal = await saveGoal({ name: input });
-      setGoals([newGoal, ...goals]);
+      setLoading(true);
+      const result = await saveGoal({ name: input });
+      if (result.error) console.error(result.error.message);
+      else setGoals([result, ...goals]);
+      setLoading(false);
     }
     save();
     setCreateDialogOpen(false);
   };
 
   const handleUpdate = (input, item) => {
+    setUpdateDialogOpen(false);
     async function update() {
-      setContextMenuOpen(false);
-      const updatedGoal = await updateGoal({ id: item.id, name: input });
-      const index = goals.indexOf(item);
-      setGoals([
-        ...goals.slice(0, index),
-        updatedGoal,
-        ...goals.slice(index + 1),
-      ]);
+      setLoading(true);
+      const result = await updateGoal({ id: item.id, name: input });
+      if (result.error) console.error(result.error.message);
+      else {
+        const index = goals.indexOf(item);
+        setGoals([...goals.slice(0, index), result, ...goals.slice(index + 1)]);
+      }
+      setLoading(false);
     }
     update();
-    setUpdateDialogOpen(false);
   };
 
   const handleDelete = (item) => {
@@ -121,6 +132,10 @@ export default function Goals() {
       >
         <AddIcon />
       </Fab>
+
+      <Backdrop sx={{ position: "absolute" }} open={loading}>
+        <CircularProgress color="inherit" />
+      </Backdrop>
     </>
   );
 }

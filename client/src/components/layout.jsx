@@ -147,9 +147,11 @@ export default function Layout({ pages, content, window }) {
       <Box
         component="main"
         sx={{
+          position: "relative",
           flexGrow: 1,
-          p: 3,
+          // p: 3,
           width: { sm: `calc(100% - ${drawerWidth}px)` },
+          height: `100vh`,
         }}
       >
         <Toolbar />
