@@ -14,7 +14,7 @@ import React, { useState, useEffect } from "react";
 import List from "./common/crudList";
 import AddIcon from "@mui/icons-material/Add";
 import { useTitle } from "../context/title";
-import { getGoals, saveGoal, deleteGoal, updateGoal } from "../services/goals";
+import GoalAPI from "../services/goals";
 import ContextMenu from "./contextMenu";
 
 import * as yup from "yup";
@@ -44,50 +44,66 @@ export default function Goals() {
   useEffect(() => {
     const update = async () => {
       setLoading(true);
-      const result = await getGoals();
-      if (result.error) console.error(result.error.message);
-      else setGoals(result);
+      try {
+        setGoals(await GoalAPI.fetch());
+      } catch (error) {
+        console.log(error.message);
+      }
       setLoading(false);
     };
     update();
   }, []);
 
   const handleAdd = (input) => {
+    setCreateDialogOpen(false);
     async function save() {
       setLoading(true);
-      const result = await saveGoal({ name: input });
-      if (result.error) console.error(result.error.message);
-      else setGoals([result, ...goals]);
+      try {
+        const [result] = await GoalAPI.create({ name: input });
+        setGoals([result, ...goals]);
+      } catch (error) {
+        console.log(error.message);
+      }
       setLoading(false);
     }
     save();
-    setCreateDialogOpen(false);
   };
 
-  const handleUpdate = (input, item) => {
+  const handleUpdate = (input, goal) => {
     setUpdateDialogOpen(false);
     async function update() {
       setLoading(true);
-      const result = await updateGoal({ id: item.id, name: input });
-      if (result.error) console.error(result.error.message);
-      else {
-        const index = goals.indexOf(item);
+      try {
+        const [result] = await GoalAPI.update({ id: goal.id, name: input });
+        const index = goals.indexOf(goal);
         setGoals([...goals.slice(0, index), result, ...goals.slice(index + 1)]);
+      } catch (error) {
+        console.log(error.message);
       }
       setLoading(false);
     }
     update();
   };
 
-  const handleDelete = (item) => {
-    deleteGoal(item);
-    const index = goals.indexOf(item);
-    setGoals([...goals.slice(0, index), ...goals.slice(index + 1)]);
+  const handleDelete = (goal) => {
+    async function remove() {
+      setLoading(true);
+      try {
+        const [result] = await GoalAPI.remove(goal);
+        const index = goals.indexOf(goal);
+        setGoals([...goals.slice(0, index), ...goals.slice(index + 1)]);
+      } catch (error) {
+        console.log(error.message);
+      }
+      setLoading(false);
+
+      setLoading(false);
+    }
   };
 
-  const handleOpenContextMenu = (event, item) => {
+  const handleOpenContextMenu = (event, goal) => {
     setSelectedAnchor(event.currentTarget);
-    setSelectedItem(item);
+    setSelectedItem(goal);
     setContextMenuOpen(true);
   };
 
