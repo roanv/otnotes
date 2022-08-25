@@ -8,40 +8,17 @@ import {
   Button,
 } from "@mui/material";
 export default function TextDialog({
-  schema,
-  items,
-  item,
+  input,
+  setInput,
+  validInput,
   handleConfirm,
   open,
-  setOpen,
+  close,
   title,
   confirmText,
 }) {
-  const [input, setInput] = useState("");
-  const [validInput, setValidInput] = useState(false);
-
-  useEffect(() => {
-    const validate = async () => {
-      const newItem = { name: input };
-      let result = await schema.isValid(newItem);
-      if (
-        items.find(
-          (item) => item.name.toLowerCase() === newItem.name.toLowerCase()
-        )
-      )
-        result = false;
-      setValidInput(result);
-    };
-    validate();
-  }, [input]);
-
-  useEffect(() => {
-    if (open && item) setInput(item.name);
-    if (!open) setInput("");
-  }, [open]);
-
   return (
-    <Dialog open={open} onClose={() => setOpen(false)}>
+    <Dialog open={open} onClose={() => close(false)}>
       <form onSubmit={(e) => e.preventDefault()}>
         <DialogTitle>{title}</DialogTitle>
         <DialogContent>
@@ -58,12 +35,8 @@ export default function TextDialog({
           ></TextField>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpen(false)}>Cancel</Button>
-          <Button
-            type="submit"
-            disabled={!validInput}
-            onClick={() => handleConfirm(input, item)}
-          >
+          <Button onClick={() => close(false)}>Cancel</Button>
+          <Button type="submit" disabled={!validInput} onClick={handleConfirm}>
             {confirmText}
           </Button>
         </DialogActions>

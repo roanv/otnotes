@@ -34,6 +34,7 @@ exports.update = async function update(goal) {
 };
 
 exports.remove = async function remove(goal) {
+  assertValidInput(goal, ["id"]);
   await assertExists(Col.ID, goal.id);
   const query = `DELETE FROM ${Table} WHERE id='${goal.id}' RETURNING *`;
   return await run(query);
@@ -42,6 +43,14 @@ exports.remove = async function remove(goal) {
 async function run(query) {
   const result = await db.query(query);
   return result.rows;
+}
+
+function assertValidInput(goal, requirements) {
+  if (!goal) throw new DatabaseError("'goal' not provided", "NoGoal");
+  if (requirements.includes("id") && !goal.id)
+    throw new DatabaseError("'id' not provided", "NoID");
+  if (requirements.includes("name") && !goal.name)
+    throw new DatabaseError("'name' not provided", "NoName");
 }
 
 async function assertExists(key, value) {

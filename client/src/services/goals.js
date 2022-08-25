@@ -16,7 +16,7 @@ async function update(goal) {
   return result.data;
 }
 async function remove(goal) {
-  const result = await axios.delete(url, goal);
+  const result = await axios.delete(url, { data: goal });
   return result.data;
 }
 

@@ -25,17 +25,20 @@ let schema = yup.object().shape({
 });
 
 export default function Goals() {
-  const [goals, setGoals] = useState([]);
-
   const [title, setTitle] = useTitle();
-
-  const [selectedItem, setSelectedItem] = useState(null);
-  const [selectedAnchor, setSelectedAnchor] = useState(null);
-
-  const [createDialogOpen, setCreateDialogOpen] = useState(false);
-  const [updateDialogOpen, setUpdateDialogOpen] = useState(false);
-  const [contextMenuOpen, setContextMenuOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  const [goals, setGoals] = useState([]);
+  const [selectedGoal, setSelectedGoal] = useState(null);
+
+  const [input, setInput] = useState("");
+  const [validInput, setValidInput] = useState(false);
+
+  const [contextMenuOpen, setContextMenuOpen] = useState(false);
+  const [menuAnchor, setMenuAnchor] = useState(null);
+
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogMode, setDialogMode] = useState(null);
 
   useEffect(() => {
     setTitle("Goals");
@@ -54,12 +57,13 @@ export default function Goals() {
     update();
   }, []);
 
-  const handleAdd = (input) => {
-    setCreateDialogOpen(false);
+  const handleCreate = () => {
+    closeDialog();
     async function save() {
       setLoading(true);
       try {
-        const [result] = await GoalAPI.create({ name: input });
+        const newGoal = { name: input };
+        const [result] = await GoalAPI.create(newGoal);
         setGoals([result, ...goals]);
       } catch (error) {
         console.log(error.message);
@@ -69,13 +73,14 @@ export default function Goals() {
     save();
   };
 
-  const handleUpdate = (input, goal) => {
-    setUpdateDialogOpen(false);
+  const handleUpdate = () => {
     async function update() {
+      closeDialog();
       setLoading(true);
       try {
-        const [result] = await GoalAPI.update({ id: goal.id, name: input });
-        const index = goals.indexOf(goal);
+        const updateGoal = { id: selectedGoal.id, name: input };
+        const [result] = await GoalAPI.update(updateGoal);
+        const index = goals.indexOf(selectedGoal);
         setGoals([...goals.slice(0, index), result, ...goals.slice(index + 1)]);
       } catch (error) {
         console.log(error.message);
@@ -85,27 +90,58 @@ export default function Goals() {
     update();
   };
 
-  const handleDelete = (goal) => {
+  const handleRemove = () => {
     async function remove() {
       setLoading(true);
       try {
-        const [result] = await GoalAPI.remove(goal);
-        const index = goals.indexOf(goal);
+        const [result] = await GoalAPI.remove(selectedGoal);
+        const index = goals.indexOf(selectedGoal);
         setGoals([...goals.slice(0, index), ...goals.slice(index + 1)]);
       } catch (error) {
-        console.log(error.message);
+        console.log(error);
       }
       setLoading(false);
-
-      setLoading(false);
     }
+    remove();
   };
 
   const handleOpenContextMenu = (event, goal) => {
-    setSelectedAnchor(event.currentTarget);
-    setSelectedItem(goal);
+    setMenuAnchor(event.currentTarget);
+    setSelectedGoal(goal);
     setContextMenuOpen(true);
   };
+
+  function openDialog(mode) {
+    setDialogOpen(true);
+    setDialogMode(mode);
+    if (mode == "Edit") setInput(selectedGoal.name);
+    else setInput("");
+  }
+
+  function closeDialog() {
+    setDialogOpen(false);
+  }
+
+  const dialogHandlers = {
+    Create: handleCreate,
+    Edit: handleUpdate,
+    Delete: handleRemove,
+  };
+
+  useEffect(() => {
+    const validate = async () => {
+      const newGoal = { name: input };
+      let result = await schema.isValid(newGoal);
+      if (
+        goals.find(
+          (goal) => goal.name.toLowerCase() === newGoal.name.toLowerCase()
+        )
+      )
+        result = false;
+      setValidInput(result);
+    };
+    validate();
+  }, [input]);
 
   return (
     <>
@@ -114,37 +150,28 @@ export default function Goals() {
       <ContextMenu
         open={contextMenuOpen}
         setOpen={setContextMenuOpen}
-        anchor={selectedAnchor}
-        item={selectedItem}
-        onUpdate={() => setUpdateDialogOpen(true)}
-        onDelete={(item) => handleDelete(item)}
+        anchor={menuAnchor}
+        item={selectedGoal}
+        onUpdate={() => openDialog("Edit")}
+        onDelete={(item) => handleRemove(item)}
         onClose={setContextMenuOpen}
       />
       <TextDialog
-        schema={schema}
-        open={updateDialogOpen}
-        setOpen={setUpdateDialogOpen}
-        item={selectedItem}
-        items={goals}
-        handleConfirm={handleUpdate}
-        title={"Editing Goal"}
-        confirmText="Update"
-      />
-      <TextDialog
-        schema={schema}
-        open={createDialogOpen}
-        items={goals}
-        setOpen={setCreateDialogOpen}
-        handleConfirm={handleAdd}
-        title="Create New Goal"
-        confirmText="Create"
+        input={input}
+        setInput={setInput}
+        validInput={validInput}
+        open={dialogOpen}
+        close={closeDialog}
+        handleConfirm={dialogHandlers[dialogMode]}
+        title={`${dialogMode} Goal`}
+        confirmText={dialogMode}
       />
 
       <Fab
         sx={{ right: 16, bottom: 16, position: "fixed" }}
         color="primary"
         aria-label="add"
-        onClick={() => setCreateDialogOpen(true)}
+        onClick={() => openDialog("Create")}
       >
         <AddIcon />
       </Fab>
