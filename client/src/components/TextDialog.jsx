@@ -23,6 +23,7 @@ export default function TextDialog({
         <DialogTitle>{`${dialogMode} ${title}`}</DialogTitle>
         <DialogContent>
           <TextField
+            autoComplete="off"
             autoFocus
             margin="dense"
             id="name"
