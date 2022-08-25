@@ -20,6 +20,13 @@ import ContextMenu from "./contextMenu";
 import * as yup from "yup";
 import TextDialog from "./TextDialog";
 
+function sort(list) {
+  list.sort((a, b) =>
+    a.name.localeCompare(b.name, undefined, { sensitivity: "base" })
+  );
+  return list;
+}
+
 let schema = yup.object().shape({
   name: yup.string().required().min(1).max(100),
 });
@@ -49,8 +56,7 @@ export default function Goals() {
       setLoading(true);
       try {
         const newGoals = await GoalAPI.fetch();
-        newGoals.sort((a, b) => a.name > b.name);
-        setGoals(newGoals);
+        setGoals(sort(newGoals));
       } catch (error) {
         console.log(error.message);
       }
@@ -80,8 +86,7 @@ export default function Goals() {
         const newGoal = { name: input };
         const [result] = await GoalAPI.create(newGoal);
         const newGoals = [result, ...goals];
-        newGoals.sort((a, b) => a.name > b.name);
-        setGoals(newGoals);
+        setGoals(sort(newGoals));
       } catch (error) {
         console.log(error.message);
       }
@@ -104,8 +109,7 @@ export default function Goals() {
           result,
           ...goals.slice(index + 1),
         ];
-        newGoals.sort((a, b) => a.name > b.name);
-        setGoals(newGoals);
+        setGoals(sort(newGoals));
       } catch (error) {
         console.log(error.message);
       }
@@ -122,8 +126,7 @@ export default function Goals() {
         const [result] = await GoalAPI.remove(selectedGoal);
         const index = goals.indexOf(selectedGoal);
         const newGoals = [...goals.slice(0, index), ...goals.slice(index + 1)];
-        newGoals.sort((a, b) => a.name > b.name);
-        setGoals(newGoals);
+        setGoals(sort(newGoals));
       } catch (error) {
         console.log(error);
       }
