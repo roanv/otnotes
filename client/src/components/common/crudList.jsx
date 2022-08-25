@@ -11,7 +11,15 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 
 export default function DropDown({ data, openMenu }) {
   return (
-    <List sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}>
+    <List
+      sx={{
+        width: "100%",
+        maxWidth: { xs: "100%", sm: "500px" },
+        // width: "100%",
+        // maxWidth: 450,
+        bgcolor: "background.paper",
+      }}
+    >
       {data.map((item) => {
         return (
           <ListItem key={item.id}>

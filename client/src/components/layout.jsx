@@ -149,7 +149,6 @@ export default function Layout({ pages, content, window }) {
         sx={{
           position: "relative",
           flexGrow: 1,
-          // p: 3,
           width: { sm: `calc(100% - ${drawerWidth}px)` },
           height: `100vh`,
         }}
