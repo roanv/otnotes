@@ -56,7 +56,7 @@ export default function Layout({ pages, content, window }) {
             textDecoration: "none",
           }}
         >
-          GOATS
+          GOTES
         </Typography>
       </Toolbar>
       <Divider />

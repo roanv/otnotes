@@ -10,6 +10,7 @@ import {
   CircularProgress,
   Box,
   Toolbar,
+  Zoom,
 } from "@mui/material";
 import React, { useState, useEffect } from "react";
 import List from "./common/crudList";
@@ -21,6 +22,8 @@ import { DRAWER_WIDTH } from "../global";
 
 import * as yup from "yup";
 import TextDialog from "./TextDialog";
+
+import { useTheme } from "@mui/material/styles";
 
 function sort(list) {
   list.sort((a, b) =>
@@ -48,6 +51,12 @@ export default function Goals() {
 
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogMode, setDialogMode] = useState(null);
+
+  const theme = useTheme();
+  const transitionDuration = {
+    enter: theme.transitions.duration.enteringScreen,
+    exit: theme.transitions.duration.leavingScreen,
+  };
 
   useEffect(() => {
     setTitle("Goals");
@@ -197,16 +206,23 @@ export default function Goals() {
           color="inherit"
         />
       </Backdrop>
-
-      <Fab
-        disabled={loading}
-        sx={{ right: 16, bottom: 16, position: "fixed" }}
-        color="primary"
-        aria-label="add"
-        onClick={() => openDialog("Create")}
+      <Zoom
+        in={!loading}
+        timeout={transitionDuration}
+        style={{
+          transitionDelay: `0ms`,
+        }}
+        unmountOnExit
       >
-        <AddIcon />
-      </Fab>
+        <Fab
+          sx={{ right: 16, bottom: 16, position: "fixed" }}
+          color="primary"
+          aria-label="add"
+          onClick={() => openDialog("Create")}
+        >
+          <AddIcon />
+        </Fab>
+      </Zoom>
     </>
   );
 }
