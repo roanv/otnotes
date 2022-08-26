@@ -32,10 +32,6 @@ function sort(list) {
   return list;
 }
 
-let schema = yup.object().shape({
-  name: yup.string().required().min(1).max(100),
-});
-
 export default function Goals() {
   const [title, setTitle] = useTitle();
   const [loading, setLoading] = useState(false);
@@ -175,14 +171,12 @@ export default function Goals() {
         onClose={setContextMenuOpen}
       />
       <InputDialog
-        schema={schema}
         input={input}
         handleInputChange={handleInputChange}
         open={inputDialogOpen}
         closeDialog={closeInputDialog}
         handleConfirm={dialogHandlers[dialogMode]}
-        title={`Goal`}
-        dialogMode={dialogMode}
+        title={`${dialogMode} Goal`}
         goals={goals}
       />
       <Backdrop

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { reach } from "yup";
+import GoalAPI from "../services/goals";
+
 import {
   Dialog,
   DialogActions,
@@ -15,28 +16,19 @@ export default function TextDialog({
   open,
   closeDialog,
   title,
-  dialogMode,
-  schema,
   goals,
 }) {
   const [validInput, setValidInput] = useState(false);
   useEffect(() => {
-    const validate = async () => {
-      let nameSchema = reach(schema, "name");
-      let valid = await nameSchema.isValid(input.name);
-      const goalInList = goals.find(
-        (goal) => goal.name.toLowerCase() === input.name.toLowerCase()
-      );
-      if (goalInList) valid = false;
-      setValidInput(valid);
-    };
-    validate();
+    const valid = GoalAPI.isValid(input, "name");
+    const duplicate = GoalAPI.listContains(goals, input);
+    setValidInput(valid && !duplicate);
   }, [input]);
 
   return (
     <Dialog open={open} onClose={closeDialog}>
       <form onSubmit={(e) => e.preventDefault()}>
-        <DialogTitle>{`${dialogMode} ${title}`}</DialogTitle>
+        <DialogTitle>{title}</DialogTitle>
         <DialogContent>
           <TextField
             autoComplete="off"
