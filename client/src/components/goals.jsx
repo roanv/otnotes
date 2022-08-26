@@ -184,7 +184,10 @@ export default function Goals() {
         title={`Goal`}
         dialogMode={dialogMode}
       />
-      <Backdrop sx={{ position: "absolute", minHeight: "100vh" }} open={true}>
+      <Backdrop
+        sx={{ position: "absolute", minHeight: "100vh" }}
+        open={loading}
+      >
         <CircularProgress
           sx={{
             left: `calc(${DRAWER_WIDTH}-50%)`,
