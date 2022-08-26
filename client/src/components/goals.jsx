@@ -16,6 +16,7 @@ import AddIcon from "@mui/icons-material/Add";
 import { useTitle } from "../context/title";
 import GoalAPI from "../services/goals";
 import ContextMenu from "./contextMenu";
+import { DRAWER_WIDTH } from "../global";
 
 import * as yup from "yup";
 import TextDialog from "./TextDialog";
@@ -192,8 +193,15 @@ export default function Goals() {
         <AddIcon />
       </Fab>
 
-      <Backdrop sx={{ position: "absolute" }} open={loading}>
-        <CircularProgress color="inherit" />
+      <Backdrop sx={{ position: "absolute" }} open={true}>
+        <CircularProgress
+          sx={{
+            left: `calc(${DRAWER_WIDTH}(100%/2))`,
+            bottom: "calc(100%/2)",
+            position: "fixed",
+          }}
+          color="inherit"
+        />
       </Backdrop>
     </>
   );

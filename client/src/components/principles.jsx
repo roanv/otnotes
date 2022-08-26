@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import List from "./common/crudList";
-import API_URL from "../api";
 import axios from "axios";
 import { useTitle } from "../context/title";
+import { API_URL } from "../global.js";
 
 export default function Principles() {
   const [principles, setPrinciples] = useState([]);

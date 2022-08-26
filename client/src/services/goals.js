@@ -1,4 +1,4 @@
-import API_URL from "../api.js";
+import { API_URL } from "../global.js";
 import axios from "axios";
 
 const url = `${API_URL}/goals`;

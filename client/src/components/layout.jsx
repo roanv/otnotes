@@ -15,8 +15,7 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import { Link, useLocation } from "react-router-dom";
 import { useTitle } from "../context/title";
-
-const drawerWidth = 240;
+import { DRAWER_WIDTH } from "../global";
 
 export default function Layout({ pages, content, window }) {
   const location = useLocation();
@@ -87,8 +86,8 @@ export default function Layout({ pages, content, window }) {
       <AppBar
         position="fixed"
         sx={{
-          width: { sm: `calc(100% - ${drawerWidth}px)` },
-          ml: { sm: `${drawerWidth}px` },
+          width: { sm: `calc(100% - ${DRAWER_WIDTH}px)` },
+          ml: { sm: `${DRAWER_WIDTH}px` },
         }}
       >
         <Toolbar>
@@ -108,7 +107,7 @@ export default function Layout({ pages, content, window }) {
       </AppBar>
       <Box
         component="nav"
-        sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
+        sx={{ width: { sm: DRAWER_WIDTH }, flexShrink: { sm: 0 } }}
         aria-label="navigation"
       >
         {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
@@ -124,7 +123,7 @@ export default function Layout({ pages, content, window }) {
             display: { xs: "block", sm: "none" },
             "& .MuiDrawer-paper": {
               boxSizing: "border-box",
-              width: drawerWidth,
+              width: DRAWER_WIDTH,
             },
           }}
         >
@@ -136,7 +135,7 @@ export default function Layout({ pages, content, window }) {
             display: { xs: "none", sm: "block" },
             "& .MuiDrawer-paper": {
               boxSizing: "border-box",
-              width: drawerWidth,
+              width: DRAWER_WIDTH,
             },
           }}
           open
@@ -149,8 +148,8 @@ export default function Layout({ pages, content, window }) {
         sx={{
           position: "relative",
           flexGrow: 1,
-          width: { sm: `calc(100% - ${drawerWidth}px)` },
-          height: `100vh`,
+          width: { sm: `calc(100% - ${DRAWER_WIDTH}px)` },
+          height: `100%`,
         }}
       >
         <Toolbar />
