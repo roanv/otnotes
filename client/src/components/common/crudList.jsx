@@ -14,7 +14,7 @@ export default function DropDown({ data, openMenu }) {
     <List
       sx={{
         width: "100%",
-        maxWidth: { xs: "100%", sm: "500px" },
+        maxWidth: { xs: "100vw", sm: "500px" },
         // width: "100%",
         // maxWidth: 450,
         bgcolor: "background.paper",
