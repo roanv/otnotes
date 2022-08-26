@@ -210,11 +210,12 @@ export default function Goals() {
         in={!loading}
         timeout={transitionDuration}
         style={{
-          transitionDelay: `0ms`,
+          transitionDelay: `${loading ? transitionDuration.exit : 0}ms`,
         }}
         unmountOnExit
       >
         <Fab
+          disabled={loading}
           sx={{ right: 16, bottom: 16, position: "fixed" }}
           color="primary"
           aria-label="add"
