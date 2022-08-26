@@ -45,18 +45,18 @@ export default function Layout({ pages, content, window }) {
     <div>
       <Toolbar>
         <Typography
-          variant="h6"
+          variant="h5"
           noWrap
           component={Link}
           to="/"
           sx={{
-            fontFamily: "sans-serif",
+            fontFamily: "monospace",
             fontWeight: 700,
             color: "inherit",
             textDecoration: "none",
           }}
         >
-          GOTES
+          OT Notes
         </Typography>
       </Toolbar>
       <Divider />
