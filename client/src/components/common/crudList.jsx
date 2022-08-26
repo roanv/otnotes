@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 
-export default function DropDown({ data, openMenu }) {
+export default function CrudList({ data, openMenu }) {
   return (
     <List
       sx={{

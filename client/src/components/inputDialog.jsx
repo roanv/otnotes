@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { reach } from "yup";
 import {
   Dialog,
   DialogActions,
@@ -9,16 +10,31 @@ import {
 } from "@mui/material";
 export default function TextDialog({
   input,
-  setInput,
-  validInput,
+  handleInputChange,
   handleConfirm,
   open,
-  close,
+  closeDialog,
   title,
   dialogMode,
+  schema,
+  goals,
 }) {
+  const [validInput, setValidInput] = useState(false);
+  useEffect(() => {
+    const validate = async () => {
+      let nameSchema = reach(schema, "name");
+      let valid = await nameSchema.isValid(input.name);
+      const goalInList = goals.find(
+        (goal) => goal.name.toLowerCase() === input.name.toLowerCase()
+      );
+      if (goalInList) valid = false;
+      setValidInput(valid);
+    };
+    validate();
+  }, [input]);
+
   return (
-    <Dialog open={open} onClose={() => close(false)}>
+    <Dialog open={open} onClose={closeDialog}>
       <form onSubmit={(e) => e.preventDefault()}>
         <DialogTitle>{`${dialogMode} ${title}`}</DialogTitle>
         <DialogContent>
@@ -31,12 +47,12 @@ export default function TextDialog({
             type="text"
             fullWidth
             variant="standard"
-            value={input}
-            onChange={(event) => setInput(event.target.value)}
+            value={input.name}
+            onChange={handleInputChange}
           ></TextField>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => close(false)}>Cancel</Button>
+          <Button onClick={closeDialog}>Cancel</Button>
           <Button type="submit" disabled={!validInput} onClick={handleConfirm}>
             Confirm
           </Button>

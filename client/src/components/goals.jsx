@@ -21,7 +21,7 @@ import ContextMenu from "./contextMenu";
 import { DRAWER_WIDTH } from "../global";
 
 import * as yup from "yup";
-import TextDialog from "./TextDialog";
+import InputDialog from "./inputDialog";
 
 import { useTheme } from "@mui/material/styles";
 
@@ -43,13 +43,17 @@ export default function Goals() {
   const [goals, setGoals] = useState([]);
   const [selectedGoal, setSelectedGoal] = useState(null);
 
-  const [input, setInput] = useState("");
-  const [validInput, setValidInput] = useState(false);
+  const [input, setInput] = useState({ name: "" });
+
+  const handleInputChange = (event) => {
+    const { id, value } = event.target;
+    setInput((prevState) => ({ ...prevState, [id]: value }));
+  };
 
   const [contextMenuOpen, setContextMenuOpen] = useState(false);
   const [menuAnchor, setMenuAnchor] = useState(null);
 
-  const [dialogOpen, setDialogOpen] = useState(false);
+  const [inputDialogOpen, setInputDialogOpen] = useState(false);
   const [dialogMode, setDialogMode] = useState(null);
 
   const theme = useTheme();
@@ -76,21 +80,8 @@ export default function Goals() {
     update();
   }, []);
 
-  useEffect(() => {
-    const validate = async () => {
-      const newGoal = { name: input };
-      let valid = await schema.isValid(newGoal);
-      const goalInList = goals.find(
-        (goal) => goal.name.toLowerCase() === newGoal.name.toLowerCase()
-      );
-      if (goalInList) valid = false;
-      setValidInput(valid);
-    };
-    validate();
-  }, [input]);
-
   const handleCreate = () => {
-    closeDialog();
+    closeInputDialog();
     async function save() {
       setLoading(true);
       try {
@@ -108,7 +99,7 @@ export default function Goals() {
   };
 
   const handleUpdate = () => {
-    closeDialog();
+    closeInputDialog();
     async function update() {
       setLoading(true);
       try {
@@ -155,13 +146,13 @@ export default function Goals() {
 
   function openDialog(mode) {
     setDialogMode(mode);
-    setDialogOpen(true);
-    if (mode == "Edit") setInput(selectedGoal.name);
-    else setInput("");
+    setInputDialogOpen(true);
+    if (mode == "Edit") setInput({ name: selectedGoal.name });
+    else setInput({ name: "" });
   }
 
-  function closeDialog() {
-    setDialogOpen(false);
+  function closeInputDialog() {
+    setInputDialogOpen(false);
   }
 
   const dialogHandlers = {
@@ -183,15 +174,16 @@ export default function Goals() {
         onDelete={handleRemove}
         onClose={setContextMenuOpen}
       />
-      <TextDialog
+      <InputDialog
+        schema={schema}
         input={input}
-        setInput={setInput}
-        validInput={validInput}
-        open={dialogOpen}
-        close={closeDialog}
+        handleInputChange={handleInputChange}
+        open={inputDialogOpen}
+        closeDialog={closeInputDialog}
         handleConfirm={dialogHandlers[dialogMode]}
         title={`Goal`}
         dialogMode={dialogMode}
+        goals={goals}
       />
       <Backdrop
         sx={{ position: "absolute", minHeight: "100vh" }}
