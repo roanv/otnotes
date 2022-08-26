@@ -24,7 +24,10 @@ export default function DropDown({ data, openMenu }) {
         return (
           <ListItem key={item.id}>
             <ListItemButton>
-              <ListItemText primary={item.name}></ListItemText>
+              <ListItemText
+                style={{ wordWrap: "break-word" }}
+                primary={item.name}
+              ></ListItemText>
               <IconButton
                 onClick={(event) => {
                   openMenu(event, item);
