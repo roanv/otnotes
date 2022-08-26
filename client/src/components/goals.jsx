@@ -9,6 +9,7 @@ import {
   Backdrop,
   CircularProgress,
   Box,
+  Toolbar,
 } from "@mui/material";
 import React, { useState, useEffect } from "react";
 import List from "./common/crudList";
@@ -183,8 +184,19 @@ export default function Goals() {
         title={`Goal`}
         dialogMode={dialogMode}
       />
+      <Backdrop sx={{ position: "absolute", minHeight: "100vh" }} open={true}>
+        <CircularProgress
+          sx={{
+            left: `calc(${DRAWER_WIDTH}-50%)`,
+            top: "50vh",
+            position: "fixed",
+          }}
+          color="inherit"
+        />
+      </Backdrop>
 
       <Fab
+        disabled={loading}
         sx={{ right: 16, bottom: 16, position: "fixed" }}
         color="primary"
         aria-label="add"
@@ -192,17 +204,6 @@ export default function Goals() {
       >
         <AddIcon />
       </Fab>
-
-      <Backdrop sx={{ position: "absolute" }} open={true}>
-        <CircularProgress
-          sx={{
-            left: `calc(${DRAWER_WIDTH}(100%/2))`,
-            bottom: "calc(100%/2)",
-            position: "fixed",
-          }}
-          color="inherit"
-        />
-      </Backdrop>
     </>
   );
 }
