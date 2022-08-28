@@ -7,12 +7,15 @@ import Principles from "./components/principles";
 import Layout from "./components/layout";
 import NotFound from "./components/notFound";
 import Page from "./objects/page";
-import { TitleProvider } from "./context/title";
+import AreasOfDevelopment from "./components/areasOfDevelopment";
+import TreeList from "./components/TreeList";
 
-export default function App() {
+const App = () => {
   const pages = [
     // new Page("Notes", <Notes goals={goals} principles={principles}></Notes>),
     new Page("Goals", <Goals />),
+    new Page("Drag Drop", <AreasOfDevelopment />),
+    new Page("Tree List", <TreeList />),
     // new Page("Principles", <Principles />),
   ];
 
@@ -21,16 +24,13 @@ export default function App() {
       {pages.map((page) => (
         <Route path={page.path} element={page.element} key={page.key} />
       ))}
-      <Route path="/" element={<Navigate replace to="/goals" />} />
+      {/* <Route path="/" element={<Navigate replace to="/goals" />} /> */}
+      <Route path="/" element={<Navigate replace to={pages[0].path} />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
 
-  return (
-    <>
-      <TitleProvider>
-        <Layout pages={pages} content={routes} />
-      </TitleProvider>
-    </>
-  );
-}
+  return <Layout pages={pages} content={routes} />;
+};
+
+export default App;

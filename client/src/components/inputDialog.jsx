@@ -10,21 +10,14 @@ import {
   Button,
 } from "@mui/material";
 export default function TextDialog({
-  input,
+  inputValues,
   handleInputChange,
   handleConfirm,
   open,
   closeDialog,
   title,
-  goals,
+  validInput,
 }) {
-  const [validInput, setValidInput] = useState(false);
-  useEffect(() => {
-    const valid = GoalAPI.isValid(input, "name");
-    const duplicate = GoalAPI.listContains(goals, input);
-    setValidInput(valid && !duplicate);
-  }, [input]);
-
   return (
     <Dialog open={open} onClose={closeDialog}>
       <form onSubmit={(e) => e.preventDefault()}>
@@ -39,7 +32,7 @@ export default function TextDialog({
             type="text"
             fullWidth
             variant="standard"
-            value={input.name}
+            value={inputValues.name}
             onChange={handleInputChange}
           ></TextField>
         </DialogContent>

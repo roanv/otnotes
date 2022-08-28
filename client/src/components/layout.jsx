@@ -17,7 +17,7 @@ import { Link, useLocation } from "react-router-dom";
 import { useTitle } from "../context/title";
 import { DRAWER_WIDTH } from "../global";
 
-export default function Layout({ pages, content, window }) {
+const Layout = ({ pages, content, window }) => {
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [title, setTitle] = useTitle();
@@ -30,12 +30,6 @@ export default function Layout({ pages, content, window }) {
   useEffect(() => {
     setSelectedIndex(pages.findIndex((page) => page.name === title));
   }, [title, pages]);
-
-  // useEffect(() => {
-  //   let newTitle = location.pathname.substring(1).toLowerCase();
-  //   newTitle = newTitle.charAt(0).toUpperCase() + newTitle.slice(1);
-  //   setTitle(newTitle);
-  // }, [location]);
 
   useEffect(() => {
     document.title = title;
@@ -157,4 +151,6 @@ export default function Layout({ pages, content, window }) {
       </Box>
     </Box>
   );
-}
+};
+
+export default Layout;

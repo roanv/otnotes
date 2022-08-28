@@ -4,7 +4,7 @@ export default class Page {
     this.element = element;
   }
   get path() {
-    return `/${this.name}`;
+    return `/${this.name.replace(/\s+/g, "-").toLowerCase()}`;
   }
   get key() {
     return `route-${this.name}`;

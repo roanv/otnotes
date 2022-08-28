@@ -12,7 +12,7 @@ import {
   Toolbar,
   Zoom,
 } from "@mui/material";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useReducer } from "react";
 import List from "./common/crudList";
 import AddIcon from "@mui/icons-material/Add";
 import { useTitle } from "../context/title";
@@ -32,18 +32,50 @@ function sort(list) {
   return list;
 }
 
+const ACTIONS = {
+  SET: "set",
+  ADD: "add",
+  REMOVE: "remove",
+  UPDATE: "update",
+};
+
+function reducer(goals, action) {
+  let index;
+  let newGoals;
+  switch (action.type) {
+    case ACTIONS.SET:
+      return sort(action.goals);
+    case ACTIONS.ADD:
+      return sort([...goals, action.newGoal]);
+    case ACTIONS.UPDATE:
+      index = goals.indexOf(action.oldGoal);
+      newGoals = [...goals.slice(0, index), ...goals.slice(index + 1)];
+      return sort([...newGoals, action.newGoal]);
+    case ACTIONS.REMOVE:
+      index = goals.indexOf(action.goal);
+      newGoals = [...goals.slice(0, index), ...goals.slice(index + 1)];
+      return sort(newGoals);
+    default:
+      throw new Error(`Invalid call on goals reducer: ${action.type}`);
+  }
+}
+
 export default function Goals() {
   const [title, setTitle] = useTitle();
   const [loading, setLoading] = useState(false);
 
-  const [goals, setGoals] = useState([]);
+  const [goals, dispatch] = useReducer(reducer, []);
   const [selectedGoal, setSelectedGoal] = useState(null);
 
-  const [input, setInput] = useState({ name: "" });
+  const [inputValues, setInputValues] = useState({ name: "" });
+  const [validInput, setValidInput] = useState({ name: false });
 
   const handleInputChange = (event) => {
     const { id, value } = event.target;
-    setInput((prevState) => ({ ...prevState, [id]: value }));
+    setInputValues((prevState) => ({ ...prevState, [id]: value }));
+    const valid = GoalAPI.isValid({ [id]: value }, id);
+    const isDuplicate = GoalAPI.listContains(goals, { [id]: value });
+    setValidInput(valid && !isDuplicate);
   };
 
   const [contextMenuOpen, setContextMenuOpen] = useState(false);
@@ -67,7 +99,7 @@ export default function Goals() {
       setLoading(true);
       try {
         const newGoals = await GoalAPI.fetch();
-        setGoals(sort(newGoals));
+        dispatch({ type: ACTIONS.SET, goals: newGoals });
       } catch (error) {
         console.log(error.message);
       }
@@ -81,10 +113,8 @@ export default function Goals() {
     async function save() {
       setLoading(true);
       try {
-        const newGoal = { name: input };
-        const [result] = await GoalAPI.create(newGoal);
-        const newGoals = [result, ...goals];
-        setGoals(sort(newGoals));
+        const [result] = await GoalAPI.create(inputValues);
+        dispatch({ type: ACTIONS.ADD, newGoal: result });
       } catch (error) {
         console.log(error.message);
       }
@@ -99,15 +129,13 @@ export default function Goals() {
     async function update() {
       setLoading(true);
       try {
-        const updateGoal = { id: selectedGoal.id, name: input };
-        const [result] = await GoalAPI.update(updateGoal);
-        const index = goals.indexOf(selectedGoal);
-        const newGoals = [
-          ...goals.slice(0, index),
-          result,
-          ...goals.slice(index + 1),
-        ];
-        setGoals(sort(newGoals));
+        const inputGoal = { id: selectedGoal.id, name: inputValues.name };
+        const [result] = await GoalAPI.update(inputGoal);
+        dispatch({
+          type: ACTIONS.UPDATE,
+          oldGoal: selectedGoal,
+          newGoal: result,
+        });
       } catch (error) {
         console.log(error.message);
       }
@@ -122,9 +150,7 @@ export default function Goals() {
       setLoading(true);
       try {
         const [result] = await GoalAPI.remove(selectedGoal);
-        const index = goals.indexOf(selectedGoal);
-        const newGoals = [...goals.slice(0, index), ...goals.slice(index + 1)];
-        setGoals(sort(newGoals));
+        dispatch({ type: ACTIONS.REMOVE, goal: selectedGoal });
       } catch (error) {
         console.log(error);
       }
@@ -143,8 +169,8 @@ export default function Goals() {
   function openDialog(mode) {
     setDialogMode(mode);
     setInputDialogOpen(true);
-    if (mode == "Edit") setInput({ name: selectedGoal.name });
-    else setInput({ name: "" });
+    if (mode == "Edit") setInputValues({ name: selectedGoal.name });
+    else setInputValues({ name: "" });
   }
 
   function closeInputDialog() {
@@ -171,13 +197,13 @@ export default function Goals() {
         onClose={setContextMenuOpen}
       />
       <InputDialog
-        input={input}
+        inputValues={inputValues}
         handleInputChange={handleInputChange}
         open={inputDialogOpen}
         closeDialog={closeInputDialog}
         handleConfirm={dialogHandlers[dialogMode]}
         title={`${dialogMode} Goal`}
-        goals={goals}
+        validInput={validInput}
       />
       <Backdrop
         sx={{ position: "absolute", minHeight: "100vh" }}
