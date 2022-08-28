@@ -23,18 +23,17 @@ function DragDropListItem({ node }) {
   const ref = useRef(null);
   const [action, setAction] = useState(null);
 
-  const [{ canDrop, isOver }, drop] = useDrop({
+  const [{ hovering }, drop] = useDrop({
     accept: TYPE.ITEM,
     drop: (item, monitor) => {
       console.log(item.action);
     },
     collect: (monitor) => ({
-      isOver: monitor.isOver(),
-      canDrop: monitor.canDrop(),
+      hovering: monitor.canDrop() && monitor.isOver(),
     }),
     hover(item, monitor) {
-      // const originPath = item.path;
-      // const hoverPath = path;
+      const origin = item.path;
+      const destination = path;
       // if (origin === destination) return;
       const boundingBox = ref.current?.getBoundingClientRect();
       if (!move.height) {
@@ -52,30 +51,37 @@ function DragDropListItem({ node }) {
         item.action = move.ACTION.DOWN;
       }
       if (mouse > move.up.max && mouse < move.down.min) {
+        // if (origin === destination) return;
         setAction(move.ACTION.MERGE);
         item.action = move.ACTION.MERGE;
       }
     },
   });
 
-  const [{ isDragging }, drag] = useDrag({
+  const [{ dragging }, drag] = useDrag({
     type: TYPE.ITEM,
     item: () => {
       return { id, path };
     },
     collect: (monitor) => ({
-      isDragging: monitor.isDragging(),
+      dragging: monitor.isDragging(),
     }),
   });
   drag(drop(ref));
 
   return (
     <div ref={ref}>
-      {isOver && canDrop && action === move.ACTION.UP ? <Divider /> : null}
-      <ListItemButton>
-        <ListItemText primary={`Item ${name} --- Path: ${path}`}></ListItemText>
+      {hovering && action === move.ACTION.UP ? <Divider /> : null}
+      <ListItemButton
+        selected={!dragging && hovering && action === move.ACTION.MERGE}
+        disabled={dragging && hovering && action === move.ACTION.MERGE}
+      >
+        <ListItemText
+          // sx={{ fontWeight: "bold", m: 1 }}
+          primary={`Item ${name} --- Path: ${path}`}
+        ></ListItemText>
       </ListItemButton>
-      {isOver && canDrop && action === move.ACTION.DOWN ? <Divider /> : null}
+      {hovering && action === move.ACTION.DOWN ? <Divider /> : null}
     </div>
   );
 }

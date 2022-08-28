@@ -10,62 +10,62 @@ import TreeNode from "./treeNode";
 const initialState = [
   {
     id: "1",
-    name: "A",
+    name: "0",
     children: [
       {
         id: "4",
-        name: "A-A",
+        name: "0-0",
         children: [
           {
             id: "13",
-            name: "A-A-A",
+            name: "0-0-0",
             children: [
-              { id: "20", name: "A-A-A-A" },
-              { id: "21", name: "A-A-A-B" },
-              { id: "22", name: "A-A-A-C" },
+              { id: "20", name: "0-0-0-0" },
+              { id: "21", name: "0-0-0-1" },
+              { id: "22", name: "0-0-0-2" },
             ],
           },
           {
             id: "23",
-            name: "A-A-B",
+            name: "0-0-1",
             children: [
-              { id: "26", name: "A-A-B-A" },
-              { id: "27", name: "A-A-B-B" },
-              { id: "28", name: "A-A-B-C" },
+              { id: "26", name: "0-0-1-0" },
+              { id: "27", name: "0-0-1-1" },
+              { id: "28", name: "0-0-1-2" },
             ],
           },
-          { id: "24", name: "A-A-C" },
-          { id: "25", name: "A-A-D" },
+          { id: "24", name: "0-0-2" },
+          { id: "25", name: "0-0-3" },
         ],
       },
       {
         id: "5",
-        name: "A-B",
+        name: "0-1",
         children: [
-          { id: "17", name: "A-B-A" },
-          { id: "18", name: "A-B-B" },
-          { id: "19", name: "A-B-C" },
+          { id: "17", name: "0-1-0" },
+          { id: "18", name: "0-1-1" },
+          { id: "19", name: "0-1-2" },
         ],
       },
-      { id: "6", name: "A-C" },
+      { id: "6", name: "0-2" },
     ],
   },
   {
     id: "2",
-    name: "B",
+    name: "1",
     children: [
-      { id: "7", name: "B-A" },
-      { id: "8", name: "B-B" },
-      { id: "9", name: "B-C" },
+      { id: "7", name: "1-0" },
+      { id: "8", name: "1-1" },
+      { id: "9", name: "1-2" },
     ],
   },
   {
     id: "3",
-    name: "C",
+    name: "2",
     children: [
-      { id: "10", name: "C-A" },
-      { id: "11", name: "C-B" },
-      { id: "12", name: "C-C" },
+      { id: "10", name: "2-0" },
+      { id: "11", name: "2-1" },
+      { id: "12", name: "2-2" },
     ],
   },
 ];
