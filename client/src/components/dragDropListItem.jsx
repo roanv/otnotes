@@ -29,7 +29,7 @@ function DragDropListItem({ node }) {
   });
   drag(drop(ref));
 
-  let backgroundColor = "WhiteSmoke";
+  let backgroundColor = "white";
   if (canDrop && isOver) {
     backgroundColor = "Blue";
   } else if (canDrop) {
