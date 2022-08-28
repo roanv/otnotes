@@ -10,79 +10,65 @@ import TreeNode from "./treeNode";
 const initialState = [
   {
     id: "1",
-    name: "item A",
+    name: "A",
     children: [
       {
         id: "4",
-        name: "item A.1",
+        name: "A-A",
         children: [
           {
             id: "13",
-            name: "item A.1.1",
+            name: "A-A-A",
             children: [
-              { id: "20", name: "item A.1..1" },
-              { id: "21", name: "item A.1.2" },
-              { id: "22", name: "item A.1.3" },
+              { id: "20", name: "A-A-A-A" },
+              { id: "21", name: "A-A-A-B" },
+              { id: "22", name: "A-A-A-C" },
             ],
           },
           {
             id: "23",
-            name: "item A.1.2",
+            name: "A-A-B",
             children: [
-              { id: "26", name: "item A.1..1" },
-              { id: "27", name: "item A.1.2" },
-              { id: "28", name: "item A.1.3" },
+              { id: "26", name: "A-A-B-A" },
+              { id: "27", name: "A-A-B-B" },
+              { id: "28", name: "A-A-B-C" },
             ],
           },
-          { id: "24", name: "item A.1.3" },
-          { id: "25", name: "item A.1.3" },
+          { id: "24", name: "A-A-C" },
+          { id: "25", name: "A-A-D" },
         ],
       },
       {
         id: "5",
-        name: "item A.2",
+        name: "A-B",
         children: [
-          { id: "17", name: "item A.2.1" },
-          { id: "18", name: "item A.2.2" },
-          { id: "19", name: "item A.2.3" },
+          { id: "17", name: "A-B-A" },
+          { id: "18", name: "A-B-B" },
+          { id: "19", name: "A-B-C" },
         ],
       },
-      { id: "6", name: "item A.3" },
+      { id: "6", name: "A-C" },
     ],
   },
   {
     id: "2",
-    name: "item B",
+    name: "B",
     children: [
-      { id: "7", name: "item B.1" },
-      { id: "8", name: "item B.2" },
-      { id: "9", name: "item B.3" },
+      { id: "7", name: "B-A" },
+      { id: "8", name: "B-B" },
+      { id: "9", name: "B-C" },
     ],
   },
   {
     id: "3",
-    name: "item C",
+    name: "C",
     children: [
-      { id: "10", name: "item C.1" },
-      { id: "11", name: "item C.2" },
-      { id: "12", name: "item C.3" },
+      { id: "10", name: "C-A" },
+      { id: "11", name: "C-B" },
+      { id: "12", name: "C-C" },
     ],
   },
 ];
-// const initialState = [
-//   { id: 1, name: "item A", path: [1] },
-//   { id: 4, name: "item A.1", path: [1, 4] },
-//   { id: 5, name: "item A.2", path: [1, 5] },
-//   { id: 6, name: "item A.3", path: [1, 6] },
-//   { id: 2, name: "item B", path: [2] },
-//   { id: 7, name: "item B.1", path: [2, 7] },
-//   { id: 8, name: "item B.2", path: [2, 8] },
-//   { id: 9, name: "item B.3", path: [2, 9] },
-//   { id: 3, name: "item C", path: [3] },
-//   { id: 10, name: "item C.1", path: [3, 10] },
-//   { id: 11, name: "item C.2", path: [3, 11] },
-//   { id: 12, name: "item C.3", path: [3, 12] },
-// ];
 
 const ACTIONS = { SET: "set", MOVE: "move" };
 
