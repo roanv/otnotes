@@ -8,14 +8,12 @@ import Layout from "./components/layout";
 import NotFound from "./components/notFound";
 import Page from "./objects/page";
 import AreasOfDevelopment from "./components/areasOfDevelopment";
-import TreeList from "./components/TreeList";
 
 const App = () => {
   const pages = [
     // new Page("Notes", <Notes goals={goals} principles={principles}></Notes>),
     new Page("Goals", <Goals />),
     new Page("Drag Drop", <AreasOfDevelopment />),
-    new Page("Tree List", <TreeList />),
     // new Page("Principles", <Principles />),
   ];
 

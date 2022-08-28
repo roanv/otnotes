@@ -3,13 +3,13 @@ import ReactDOM from "react-dom/client";
 import App from "./app";
 import { BrowserRouter } from "react-router-dom";
 import { TitleProvider } from "./context/title";
+import { HTML5Backend } from "react-dnd-html5-backend";
 import { DndProvider } from "react-dnd";
-import { getBackendOptions, MultiBackend } from "@minoru/react-dnd-treeview";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <BrowserRouter>
-    <DndProvider backend={MultiBackend} options={getBackendOptions()}>
+    <DndProvider backend={HTML5Backend}>
       <TitleProvider>
         <App />
       </TitleProvider>
