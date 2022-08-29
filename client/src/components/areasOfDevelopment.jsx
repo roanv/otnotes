@@ -1,11 +1,10 @@
 import React, { useEffect, useReducer } from "react";
 import update from "immutability-helper";
 import { useTitle } from "../context/title";
-import { TreeView } from "@mui/lab";
+import { TreeView, TreeItem } from "@mui/lab";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-
-import TreeNode from "./treeNode";
+import DragDropListButton from "./dragDropListButton";
 
 // const initialState = [
 //   {
@@ -120,41 +119,53 @@ function getExpanded(areas) {
   return list;
 }
 
-function getTreeView(areas) {
-  const list = [];
-  areas.map((area) => {
-    list.push(area.id);
-    if (area.expanded && area.children)
-      list.push(...getTreeView(area.children));
+function getVisible(areas) {
+  return areas.filter((area) => {
+    if (!area.parent) return area;
+    const parent = areas.find((parent) => parent.id == area.parent);
+    if (parent.expanded) return area;
   });
-  return list;
 }
 
 function updateExpanded(areas, nodes) {
   return areas.map((area) => {
-    if (nodes.indexOf(area.id) >= 0) area.expanded = true;
+    const exists = nodes.indexOf(area.id.toString()) >= 0;
+    if (exists) area.expanded = true;
     else area.expanded = false;
-    if (area.children) area.children = updateExpanded(area.children, nodes);
     return area;
   });
 }
 
-function merge(origin, target, areas) {}
+function merge(source, target, areas) {
+  if (source === target) return areas;
+  source = areas.find((area) => area.id === source);
+  target = areas.find((area) => area.id === target);
+  if (hasAncestor(target, source, areas)) return areas;
+  return areas.map((area) => {
+    if (area.id == source.id) area.parent = target.id;
+    return area;
+  });
+}
+
+function hasAncestor(child, ancestor, areas) {
+  if (child.parent === ancestor.id) return true;
+  const parent = areas.find((area) => area.id === child.parent);
+  if (child.parent) return hasAncestor(parent, ancestor, areas);
+  return false;
+}
 
 function reducer(areas, { type, payload }) {
   switch (type) {
     case ACTIONS.DRAGDROP:
-      // const { origin, cursor, offset } = payload;
-      // const treeView = getTreeView(areas);
-      // const cursorIndex = treeView.findIndex((id) => id === cursor);
-      // const originIndex = treeView.findIndex((id) => id === origin);
-      // const result = merge(origin, cursor, areas);
+      const { origin, cursor, offset } = payload;
+      // console.log(origin, cursor, offset);
+      // const visible = getVisible(areas);
+      // const cursorIndex = visible.findIndex((id) => id === cursor);
+      // const originIndex = visible.findIndex((id) => id === origin);
 
-      // console.log(result);
-      return areas;
+      return merge(origin, cursor, areas);
     case ACTIONS.TOGGLENODE:
-      return areas;
-    // return updateExpanded(areas, payload.cursorIndex);
+      return updateExpanded(areas, payload.nodes);
     default:
       return areas;
   }
@@ -168,31 +179,11 @@ const listStyle = {
 
 function AreasOfDevelopment() {
   const [title, setTitle] = useTitle();
-  const renderTree = (node, index) => {
-    return (
-      <TreeNode
-        key={node.id}
-        rootNode={node}
-        rootIndex={index}
-        handleDragDrop={handleDragDrop}
-      ></TreeNode>
-    );
-  };
+  const [areas, dispatch] = useReducer(reducer, initialState);
+
   useEffect(() => {
     setTitle("Drag Drop");
   });
-  const [areas, dispatch] = useReducer(reducer, initialState);
-
-  return (
-    <TreeView
-      onNodeToggle={handleNodeToggle}
-      disableSelection={true}
-      defaultCollapseIcon={<ExpandMoreIcon />}
-      defaultExpandIcon={<ChevronRightIcon />}
-    >
-      {areas.map(renderTree)}
-    </TreeView>
-  );
 
   function handleNodeToggle(event, nodes) {
     dispatch({ type: ACTIONS.TOGGLENODE, payload: { nodes } });
@@ -204,6 +195,44 @@ function AreasOfDevelopment() {
       payload: { origin, cursor, offset },
     });
   }
+
+  function renderTree() {
+    const roots = areas.filter((node) => !node.parent);
+    return roots.map((root) => renderRoots(root, areas));
+  }
+
+  function renderRoots(root, tree) {
+    const children = tree.filter((node) => node.parent === root.id);
+    return (
+      <TreeItem
+        label={renderNode(root)}
+        nodeId={root.id.toString()}
+        key={root.id}
+      >
+        {children.map((child) => renderRoots(child, tree))}
+      </TreeItem>
+    );
+  }
+
+  function renderNode(node) {
+    return (
+      <DragDropListButton
+        handleDragDrop={handleDragDrop}
+        node={node}
+      ></DragDropListButton>
+    );
+  }
+
+  return (
+    <TreeView
+      onNodeToggle={handleNodeToggle}
+      disableSelection={true}
+      defaultCollapseIcon={<ExpandMoreIcon />}
+      defaultExpandIcon={<ChevronRightIcon />}
+    >
+      {renderTree()}
+    </TreeView>
+  );
 }
 
 export default AreasOfDevelopment;

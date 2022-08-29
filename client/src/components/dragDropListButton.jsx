@@ -72,7 +72,7 @@ function DragDropListButton({ node, handleDragDrop }) {
         selected={!dragging && hovering && action === move.ACTIONS.MERGE}
         disabled={dragging && hovering && action === move.ACTIONS.MERGE}
       >
-        <ListItemText primary={`${id} :::: ${path}`}></ListItemText>
+        <ListItemText primary={`${id} :::: ${name}`}></ListItemText>
       </ListItemButton>
       {hovering && action === move.ACTIONS.DOWN ? <Divider /> : null}
     </div>
