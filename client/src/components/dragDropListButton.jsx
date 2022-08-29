@@ -6,10 +6,11 @@ export const TYPE = {
 };
 
 const move = {
-  ACTION: { UP: "up", DOWN: "down", MERGE: "merge" },
+  ACTIONS: { UP: -1, DOWN: 1, MERGE: 0 },
   divisions: 4,
   up: {},
   down: {},
+  /**@param {Number} height */
   set height(height) {
     this.up.min = 0;
     this.up.max = height / this.divisions;
@@ -18,7 +19,7 @@ const move = {
   },
 };
 
-function DragDropListItem({ node }) {
+function DragDropListButton({ node, handleDragDrop }) {
   const { id, name, path } = node;
   const ref = useRef(null);
   const [action, setAction] = useState(null);
@@ -26,15 +27,15 @@ function DragDropListItem({ node }) {
   const [{ hovering }, drop] = useDrop({
     accept: TYPE.ITEM,
     drop: (item, monitor) => {
-      console.log(item.action);
+      // console.log("from ", item.path, " to ", path);
+      const origin = item.id;
+      const destination = id;
+      handleDragDrop(origin, destination, action);
     },
     collect: (monitor) => ({
       hovering: monitor.canDrop() && monitor.isOver(),
     }),
     hover(item, monitor) {
-      const origin = item.path;
-      const destination = path;
-      // if (origin === destination) return;
       const boundingBox = ref.current?.getBoundingClientRect();
       if (!move.height) {
         move.height = boundingBox.bottom - boundingBox.top;
@@ -42,26 +43,21 @@ function DragDropListItem({ node }) {
       const mouseGlobal = monitor.getClientOffset();
       const mouse = mouseGlobal.y - boundingBox.top;
 
-      if (mouse > move.up.min && mouse < move.up.max) {
-        setAction(move.ACTION.UP);
-        item.action = move.ACTION.UP;
-      }
-      if (mouse > move.down.min && mouse < move.down.max) {
-        setAction(move.ACTION.DOWN);
-        item.action = move.ACTION.DOWN;
-      }
-      if (mouse > move.up.max && mouse < move.down.min) {
-        // if (origin === destination) return;
-        setAction(move.ACTION.MERGE);
-        item.action = move.ACTION.MERGE;
-      }
+      if (mouse > move.up.min && mouse < move.up.max)
+        setAction(move.ACTIONS.UP);
+
+      if (mouse > move.down.min && mouse < move.down.max)
+        setAction(move.ACTIONS.DOWN);
+
+      if (mouse > move.up.max && mouse < move.down.min)
+        setAction(move.ACTIONS.MERGE);
     },
   });
 
   const [{ dragging }, drag] = useDrag({
     type: TYPE.ITEM,
     item: () => {
-      return { id, path };
+      return { id };
     },
     collect: (monitor) => ({
       dragging: monitor.isDragging(),
@@ -71,18 +67,15 @@ function DragDropListItem({ node }) {
 
   return (
     <div ref={ref}>
-      {hovering && action === move.ACTION.UP ? <Divider /> : null}
+      {hovering && action === move.ACTIONS.UP ? <Divider /> : null}
       <ListItemButton
-        selected={!dragging && hovering && action === move.ACTION.MERGE}
-        disabled={dragging && hovering && action === move.ACTION.MERGE}
+        selected={!dragging && hovering && action === move.ACTIONS.MERGE}
+        disabled={dragging && hovering && action === move.ACTIONS.MERGE}
       >
-        <ListItemText
-          // sx={{ fontWeight: "bold", m: 1 }}
-          primary={`Item ${name} --- Path: ${path}`}
-        ></ListItemText>
+        <ListItemText primary={`${id} :::: ${path}`}></ListItemText>
       </ListItemButton>
-      {hovering && action === move.ACTION.DOWN ? <Divider /> : null}
+      {hovering && action === move.ACTIONS.DOWN ? <Divider /> : null}
     </div>
   );
 }
-export default DragDropListItem;
+export default DragDropListButton;

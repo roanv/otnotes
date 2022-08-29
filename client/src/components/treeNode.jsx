@@ -1,10 +1,15 @@
-import DragDropListItem from "./dragDropListItem";
+import DragDropListButton from "./dragDropListButton";
 import { TreeItem } from "@mui/lab";
 
-function TreeNode({ rootNode, rootIndex }) {
+function TreeNode({ rootNode, rootIndex, handleDragDrop }) {
   let path = [];
   function renderNodeContents(node) {
-    return <DragDropListItem node={node}></DragDropListItem>;
+    return (
+      <DragDropListButton
+        handleDragDrop={handleDragDrop}
+        node={node}
+      ></DragDropListButton>
+    );
   }
 
   function renderChildren(node) {
@@ -20,7 +25,7 @@ function TreeNode({ rootNode, rootIndex }) {
   }
 
   function renderNode(node, index) {
-    path.push(index);
+    path.push(node.id);
     node.path = [...path];
     return (
       <TreeItem
