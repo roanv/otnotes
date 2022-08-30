@@ -7,7 +7,7 @@ export const TYPE = {
 
 const dropBox = {
   OPTIONS: { TOP: -1, MIDDLE: 0, BOTTOM: 1 },
-  divisions: 4,
+  divisions: 3,
 
   _section: { top: {}, bottom: {}, set: false },
 
@@ -86,11 +86,7 @@ function DragDropListButton({ node, handleDrop, handleDrag }) {
         }
         disabled={node.isDragging}
       >
-        <ListItemText
-          primary={`${node.parent ? node.parent + " - " : ""} ${id}  ${
-            node.isDragging ? " INVALID MERGE" : ""
-          }`}
-        ></ListItemText>
+        <ListItemText primary={`${node.name}`}></ListItemText>
       </ListItemButton>
       {hovering && action === dropBox.OPTIONS.BOTTOM ? <Divider /> : null}
     </div>
