@@ -33,7 +33,7 @@ const initialState = [
   { id: 25, name: "CC", parent: 22 },
 ];
 
-const ACTIONS = { DROP: "drop", EXPAND: "expand", DISABLE: "disable" };
+const ACTIONS = { DROP: "drop", EXPAND: "expand", DRAG: "disable" };
 // return update(areas, {
 //   $splice: [
 //     [action.from, 1],
@@ -73,12 +73,12 @@ function setExpanded(areas, nodes) {
   });
 }
 
-function merge(source, target, areas) {
-  if (source === target) return areas;
+function merge(origin, target, areas) {
+  if (origin === target) return areas;
   target = areas.find((area) => area.id === target);
-  if (hasAncestor(target, source, areas)) return areas;
+  if (hasAncestor(target, origin, areas)) return areas;
   return areas.map((area) => {
-    if (area.id == source.id) area.parent = target.id;
+    if (area.id == origin) area.parent = target.id;
     return area;
   });
 }
@@ -90,26 +90,38 @@ function hasAncestor(child, ancestor, areas) {
   return false;
 }
 
+function findArea(id, areas) {
+  return areas.find((area) => (area.id === id ? area : null));
+}
+
 function reducer(areas, { type, payload }) {
   switch (type) {
     case ACTIONS.DROP:
-      const { origin, cursor, offset } = payload;
+      const { origin, target, offset } = payload;
+      let result = areas;
+      if (offset === 0) result = merge(origin, target, areas);
       // console.log(origin, cursor, offset);
       // const visible = getVisible(areas);
       // const cursorIndex = visible.findIndex((id) => id === cursor);
       // const originIndex = visible.findIndex((id) => id === origin);
-
-      return merge(origin, cursor, areas);
-    case ACTIONS.EXPAND:
-      return setExpanded(areas, payload.nodes);
-    case ACTIONS.DISABLE:
-      const { id, active } = payload;
-      const result = areas.map((area) => {
-        if (area.id === id || hasAncestor(area, id, areas))
-          area.isDragging = active;
+      result = areas.map((area) => {
+        area.isDragging = false;
         return area;
       });
       return result;
+    case ACTIONS.EXPAND:
+      return setExpanded(areas, payload.nodes);
+    case ACTIONS.DRAG:
+      const { id } = payload;
+      return areas.map((area) => {
+        if (
+          area.id === id ||
+          hasAncestor(area, id, areas) ||
+          findArea(id, areas).parent === area.id
+        )
+          area.isDragging = true;
+        return area;
+      });
     default:
       console.error("Undefined reducer called");
       return areas;
@@ -135,20 +147,6 @@ function AreasOfDevelopment() {
     dispatch({ type: ACTIONS.EXPAND, payload: { nodes } });
   }
 
-  function handleDrop(origin, cursor, offset) {
-    dispatch({
-      type: ACTIONS.DROP,
-      payload: { origin, cursor, offset },
-    });
-  }
-
-  function handleDrag(id, active) {
-    dispatch({
-      type: ACTIONS.DISABLE,
-      payload: { id, active },
-    });
-  }
-
   function renderTree() {
     const roots = areas.filter((node) => !node.parent);
     return roots.map((root) => renderRoots(root, areas));
@@ -170,8 +168,18 @@ function AreasOfDevelopment() {
   function renderNode(node) {
     return (
       <DragDropListButton
-        handleDrop={handleDrop}
-        handleDrag={handleDrag}
+        handleDrop={(origin, target, offset) => {
+          dispatch({
+            type: ACTIONS.DROP,
+            payload: { origin, target, offset },
+          });
+        }}
+        handleDrag={(id) => {
+          dispatch({
+            type: ACTIONS.DRAG,
+            payload: { id },
+          });
+        }}
         node={node}
       ></DragDropListButton>
     );

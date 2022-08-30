@@ -69,10 +69,10 @@ function DragDropListButton({ node, handleDrop, handleDrag }) {
     }),
     isDragging: (monitor) => {
       const item = monitor.getItem();
-      if (!node.isDragging && item.id === node.id) handleDrag(node.id, true);
+      if (!node.isDragging && item.id === node.id) handleDrag(node.id);
     },
     end: (dropResult, monitor) => {
-      handleDrag(node.id, false);
+      handleDrop();
     },
   });
   drag(drop(ref));
@@ -87,7 +87,7 @@ function DragDropListButton({ node, handleDrop, handleDrag }) {
         disabled={node.isDragging}
       >
         <ListItemText
-          primary={`${id} :::: ${name} ::: ${node.isDragging}`}
+          primary={`${id} ::: ${name} ::: ${node.isDragging} ::: ${node.parent}`}
         ></ListItemText>
       </ListItemButton>
       {hovering && action === dropBox.OPTIONS.BOTTOM ? <Divider /> : null}
