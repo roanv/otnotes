@@ -1,56 +1,61 @@
 import { useDrag, useDrop } from "react-dnd";
 import { useRef, useEffect, useState } from "react";
-import { Chip, Divider, ListItemButton, ListItemText } from "@mui/material";
+import { Divider, ListItemButton, ListItemText } from "@mui/material";
 export const TYPE = {
   ITEM: "item",
 };
 
-const move = {
-  ACTIONS: { UP: -1, DOWN: 1, MERGE: 0 },
+const dropBox = {
+  OPTIONS: { TOP: -1, MIDDLE: 0, BOTTOM: 1 },
   divisions: 4,
-  up: {},
-  down: {},
-  /**@param {Number} height */
-  set height(height) {
-    this.up.min = 0;
-    this.up.max = height / this.divisions;
-    this.down.min = height - height / this.divisions;
-    this.down.max = height;
+
+  _section: { top: {}, bottom: {}, set: false },
+
+  /**@param {Number} boundsMax */
+  set section(boundsMax) {
+    this._section.top.min = 0;
+    this._section.top.max = boundsMax / this.divisions;
+    this._section.bottom.min = boundsMax - boundsMax / this.divisions;
+    this._section.bottom.max = boundsMax;
+    this._section.set = true;
+  },
+  get section() {
+    return this._section;
   },
 };
 
-function DragDropListButton({ node, handleDragDrop }) {
-  const { id, name, path } = node;
+function DragDropListButton({ node, handleDrop, handleDrag }) {
+  const { id, name } = node;
   const ref = useRef(null);
   const [action, setAction] = useState(null);
 
   const [{ hovering }, drop] = useDrop({
     accept: TYPE.ITEM,
     drop: (item, monitor) => {
-      // console.log("from ", item.path, " to ", path);
       const origin = item.id;
-      const destination = id;
-      handleDragDrop(origin, destination, action);
+      const target = id;
+      handleDrop(origin, target, action);
     },
     collect: (monitor) => ({
       hovering: monitor.canDrop() && monitor.isOver(),
     }),
     hover(item, monitor) {
-      const boundingBox = ref.current?.getBoundingClientRect();
-      if (!move.height) {
-        move.height = boundingBox.bottom - boundingBox.top;
-      }
+      const element = ref.current?.getBoundingClientRect();
+
+      if (!dropBox.section.set) dropBox.section = element.bottom - element.top;
+      const { section, OPTIONS } = dropBox;
+
       const mouseGlobal = monitor.getClientOffset();
-      const mouse = mouseGlobal.y - boundingBox.top;
+      const mouse = mouseGlobal.y - element.top;
 
-      if (mouse > move.up.min && mouse < move.up.max)
-        setAction(move.ACTIONS.UP);
+      if (mouse > section.top.min && mouse < section.top.max)
+        setAction(OPTIONS.TOP);
 
-      if (mouse > move.down.min && mouse < move.down.max)
-        setAction(move.ACTIONS.DOWN);
-
-      if (mouse > move.up.max && mouse < move.down.min)
-        setAction(move.ACTIONS.MERGE);
+      if (mouse > section.top.max && mouse < section.bottom.min) {
+        setAction(OPTIONS.MIDDLE);
+      }
+      if (mouse > section.bottom.min && mouse < section.bottom.max)
+        setAction(OPTIONS.BOTTOM);
     },
   });
 
@@ -62,19 +67,30 @@ function DragDropListButton({ node, handleDragDrop }) {
     collect: (monitor) => ({
       dragging: monitor.isDragging(),
     }),
+    isDragging: (monitor) => {
+      const item = monitor.getItem();
+      if (!node.isDragging && item.id === node.id) handleDrag(node.id, true);
+    },
+    end: (dropResult, monitor) => {
+      handleDrag(node.id, false);
+    },
   });
   drag(drop(ref));
 
   return (
     <div ref={ref}>
-      {hovering && action === move.ACTIONS.UP ? <Divider /> : null}
+      {hovering && action === dropBox.OPTIONS.TOP ? <Divider /> : null}
       <ListItemButton
-        selected={!dragging && hovering && action === move.ACTIONS.MERGE}
-        disabled={dragging && hovering && action === move.ACTIONS.MERGE}
+        selected={
+          !node.isDragging && hovering && action === dropBox.OPTIONS.MIDDLE
+        }
+        disabled={node.isDragging}
       >
-        <ListItemText primary={`${id} :::: ${name}`}></ListItemText>
+        <ListItemText
+          primary={`${id} :::: ${name} ::: ${node.isDragging}`}
+        ></ListItemText>
       </ListItemButton>
-      {hovering && action === move.ACTIONS.DOWN ? <Divider /> : null}
+      {hovering && action === dropBox.OPTIONS.BOTTOM ? <Divider /> : null}
     </div>
   );
 }

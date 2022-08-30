@@ -1,73 +1,10 @@
-import React, { useEffect, useReducer } from "react";
+import React, { useEffect, useReducer, useState } from "react";
 import update from "immutability-helper";
 import { useTitle } from "../context/title";
 import { TreeView, TreeItem } from "@mui/lab";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import DragDropListButton from "./dragDropListButton";
-
-// const initialState = [
-//   {
-//     id: "schmemes",
-//     name: "0",
-//     children: [
-//       {
-//         id: "4",
-//         name: "0-0",
-//         children: [
-//           {
-//             id: "13",
-//             name: "0-0-0",
-//             children: [
-//               { id: "20", name: "0-0-0-0" },
-//               { id: "21", name: "0-0-0-1" },
-//               { id: "22", name: "0-0-0-2" },
-//             ],
-//           },
-//           {
-//             id: "23",
-//             name: "0-0-1",
-//             children: [
-//               { id: "26", name: "0-0-1-0" },
-//               { id: "27", name: "0-0-1-1" },
-//               { id: "28", name: "0-0-1-2" },
-//             ],
-//           },
-//           { id: "24", name: "0-0-2" },
-//           { id: "25", name: "0-0-3" },
-//         ],
-//       },
-//       {
-//         id: "5",
-//         name: "0-1",
-//         children: [
-//           { id: "17", name: "0-1-0" },
-//           { id: "18", name: "0-1-1" },
-//           { id: "19", name: "0-1-2" },
-//         ],
-//       },
-//       { id: "6", name: "0-2" },
-//     ],
-//   },
-//   {
-//     id: "2",
-//     name: "1",
-//     children: [
-//       { id: "7", name: "1-0" },
-//       { id: "8", name: "1-1" },
-//       { id: "9", name: "1-2" },
-//     ],
-//   },
-//   {
-//     id: "3",
-//     name: "2",
-//     children: [
-//       { id: "10", name: "2-0" },
-//       { id: "11", name: "2-1" },
-//       { id: "12", name: "2-2" },
-//     ],
-//   },
-// ];
 
 const initialState = [
   { id: 1, name: "A" },
@@ -96,7 +33,7 @@ const initialState = [
   { id: 25, name: "CC", parent: 22 },
 ];
 
-const ACTIONS = { DRAGDROP: "dragdrop", TOGGLENODE: "expand" };
+const ACTIONS = { DROP: "drop", EXPAND: "expand", DISABLE: "disable" };
 // return update(areas, {
 //   $splice: [
 //     [action.from, 1],
@@ -104,30 +41,30 @@ const ACTIONS = { DRAGDROP: "dragdrop", TOGGLENODE: "expand" };
 //   ],
 // });
 
-function getAreaFromPath(areas, [key, ...path]) {
-  key = areas.findIndex((a) => a.id === key);
-  if (path.length) return getAreaFromPath(areas[key].children, path);
-  return areas[key];
-}
+// function getAreaFromPath(areas, [key, ...path]) {
+//   key = areas.findIndex((a) => a.id === key);
+//   if (path.length) return getAreaFromPath(areas[key].children, path);
+//   return areas[key];
+// }
 
-function getExpanded(areas) {
-  const list = [];
-  areas.map((area) => {
-    if (area.expanded) list.push(area);
-    if (area.children) list.push(...getExpanded(area.children));
-  });
-  return list;
-}
+// function getExpanded(areas) {
+//   const list = [];
+//   areas.map((area) => {
+//     if (area.expanded) list.push(area);
+//     if (area.children) list.push(...getExpanded(area.children));
+//   });
+//   return list;
+// }
 
-function getVisible(areas) {
-  return areas.filter((area) => {
-    if (!area.parent) return area;
-    const parent = areas.find((parent) => parent.id == area.parent);
-    if (parent.expanded) return area;
-  });
-}
+// function getVisible(areas) {
+//   return areas.filter((area) => {
+//     if (!area.parent) return area;
+//     const parent = areas.find((parent) => parent.id == area.parent);
+//     if (parent.expanded) return area;
+//   });
+// }
 
-function updateExpanded(areas, nodes) {
+function setExpanded(areas, nodes) {
   return areas.map((area) => {
     const exists = nodes.indexOf(area.id.toString()) >= 0;
     if (exists) area.expanded = true;
@@ -138,7 +75,6 @@ function updateExpanded(areas, nodes) {
 
 function merge(source, target, areas) {
   if (source === target) return areas;
-  source = areas.find((area) => area.id === source);
   target = areas.find((area) => area.id === target);
   if (hasAncestor(target, source, areas)) return areas;
   return areas.map((area) => {
@@ -148,7 +84,7 @@ function merge(source, target, areas) {
 }
 
 function hasAncestor(child, ancestor, areas) {
-  if (child.parent === ancestor.id) return true;
+  if (child.parent === ancestor) return true;
   const parent = areas.find((area) => area.id === child.parent);
   if (child.parent) return hasAncestor(parent, ancestor, areas);
   return false;
@@ -156,7 +92,7 @@ function hasAncestor(child, ancestor, areas) {
 
 function reducer(areas, { type, payload }) {
   switch (type) {
-    case ACTIONS.DRAGDROP:
+    case ACTIONS.DROP:
       const { origin, cursor, offset } = payload;
       // console.log(origin, cursor, offset);
       // const visible = getVisible(areas);
@@ -164,9 +100,18 @@ function reducer(areas, { type, payload }) {
       // const originIndex = visible.findIndex((id) => id === origin);
 
       return merge(origin, cursor, areas);
-    case ACTIONS.TOGGLENODE:
-      return updateExpanded(areas, payload.nodes);
+    case ACTIONS.EXPAND:
+      return setExpanded(areas, payload.nodes);
+    case ACTIONS.DISABLE:
+      const { id, active } = payload;
+      const result = areas.map((area) => {
+        if (area.id === id || hasAncestor(area, id, areas))
+          area.isDragging = active;
+        return area;
+      });
+      return result;
     default:
+      console.error("Undefined reducer called");
       return areas;
   }
 }
@@ -180,19 +125,27 @@ const listStyle = {
 function AreasOfDevelopment() {
   const [title, setTitle] = useTitle();
   const [areas, dispatch] = useReducer(reducer, initialState);
+  const [disabled, setDisabled] = useState(false);
 
   useEffect(() => {
     setTitle("Drag Drop");
   });
 
   function handleNodeToggle(event, nodes) {
-    dispatch({ type: ACTIONS.TOGGLENODE, payload: { nodes } });
+    dispatch({ type: ACTIONS.EXPAND, payload: { nodes } });
   }
 
-  function handleDragDrop(origin, cursor, offset) {
+  function handleDrop(origin, cursor, offset) {
     dispatch({
-      type: ACTIONS.DRAGDROP,
+      type: ACTIONS.DROP,
       payload: { origin, cursor, offset },
+    });
+  }
+
+  function handleDrag(id, active) {
+    dispatch({
+      type: ACTIONS.DISABLE,
+      payload: { id, active },
     });
   }
 
@@ -217,15 +170,23 @@ function AreasOfDevelopment() {
   function renderNode(node) {
     return (
       <DragDropListButton
-        handleDragDrop={handleDragDrop}
+        handleDrop={handleDrop}
+        handleDrag={handleDrag}
         node={node}
       ></DragDropListButton>
     );
   }
 
+  function getExpanded() {
+    return areas.map((area) => {
+      if (area.expanded) return area.id.toString();
+    });
+  }
+
   return (
     <TreeView
       onNodeToggle={handleNodeToggle}
+      // expanded={getExpanded()}
       disableSelection={true}
       defaultCollapseIcon={<ExpandMoreIcon />}
       defaultExpandIcon={<ChevronRightIcon />}
