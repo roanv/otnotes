@@ -87,7 +87,9 @@ function DragDropListButton({ node, handleDrop, handleDrag }) {
         disabled={node.isDragging}
       >
         <ListItemText
-          primary={`${id} ::: ${name} ::: ${node.isDragging} ::: ${node.parent}`}
+          primary={`${node.parent ? node.parent + " - " : ""} ${id}  ${
+            node.isDragging ? " INVALID MERGE" : ""
+          }`}
         ></ListItemText>
       </ListItemButton>
       {hovering && action === dropBox.OPTIONS.BOTTOM ? <Divider /> : null}

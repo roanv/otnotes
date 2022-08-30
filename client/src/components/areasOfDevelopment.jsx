@@ -56,13 +56,13 @@ const ACTIONS = { DROP: "drop", EXPAND: "expand", DRAG: "disable" };
 //   return list;
 // }
 
-// function getVisible(areas) {
-//   return areas.filter((area) => {
-//     if (!area.parent) return area;
-//     const parent = areas.find((parent) => parent.id == area.parent);
-//     if (parent.expanded) return area;
-//   });
-// }
+function getVisible(areas) {
+  return areas.filter((area) => {
+    if (!area.parent) return area.id;
+    const parent = areas.find((parent) => parent.id == area.parent);
+    if (parent.expanded) return area.id;
+  });
+}
 
 function setExpanded(areas, nodes) {
   return areas.map((area) => {
@@ -85,7 +85,7 @@ function merge(origin, target, areas) {
 
 function hasAncestor(child, ancestor, areas) {
   if (child.parent === ancestor) return true;
-  const parent = areas.find((area) => area.id === child.parent);
+  const parent = findParent(child.parent, areas);
   if (child.parent) return hasAncestor(parent, ancestor, areas);
   return false;
 }
@@ -94,12 +94,47 @@ function findArea(id, areas) {
   return areas.find((area) => (area.id === id ? area : null));
 }
 
+function findParent(id, areas) {
+  return areas.find((area) => area.id === id);
+}
+
+function ancestorCount(child, areas) {
+  if (child.parent) {
+    const parent = findArea(child.parent, areas);
+    return 1 + ancestorCount(parent, areas);
+  } else return 0;
+}
+
+function move(origin, cursor, offset, areas) {
+  areas = [...areas];
+  origin = findArea(origin, areas);
+  const visible = getVisible(areas);
+  const cursorIndex = visible.findIndex((area) => area.id === cursor);
+  const above = visible[offset < 0 ? cursorIndex - 1 : cursorIndex];
+  const below = visible[offset > 0 ? cursorIndex + 1 : cursorIndex];
+
+  if (!above) origin.parent = null;
+  if (!below) origin.parent = above.parent;
+  if (!above || !below) return areas;
+
+  const aboveDepth = ancestorCount(above, areas);
+  const belowDepth = ancestorCount(below, areas);
+
+  if (aboveDepth === belowDepth) origin.parent = above.parent;
+  if (aboveDepth < belowDepth) origin.parent = below.parent;
+  if (aboveDepth > belowDepth)
+    if (offset < 0) origin.parent = below.parent;
+    else origin.parent = above.parent;
+  return areas;
+}
+
 function reducer(areas, { type, payload }) {
   switch (type) {
     case ACTIONS.DROP:
       const { origin, target, offset } = payload;
       let result = areas;
       if (offset === 0) result = merge(origin, target, areas);
+      else if (offset) result = move(origin, target, offset, areas);
       // console.log(origin, cursor, offset);
       // const visible = getVisible(areas);
       // const cursorIndex = visible.findIndex((id) => id === cursor);
