@@ -1,15 +1,15 @@
 -- RUN AS ADMIN
-SET SCHEMA 'info';
+SET SCHEMA 'development';
 
 CREATE TABLE IF NOT EXISTS area (
     id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL UNIQUE,
-    path ltree
+    path ext.ltree
 );
 
 CREATE INDEX tree_path_idx ON area USING GIST (path);
 
-GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA info TO api;
+GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA development TO api;
 GRANT SELECT, UPDATE(path), DELETE ON area TO mod;
 GRANT SELECT, INSERT ON area TO api;
 GRANT UPDATE (name) ON area TO api;
@@ -39,8 +39,8 @@ CREATE OR REPLACE FUNCTION move_branch(source_id integer,destination_id integer)
     AS 
 $$
 DECLARE
-    old_path ltree;
-    new_path ltree;
+    old_path ext.ltree;
+    new_path ext.ltree;
 BEGIN
     SELECT path INTO old_path FROM area WHERE id = source_id;
     IF destination_id IS NULL THEN 
@@ -64,7 +64,7 @@ CREATE OR REPLACE FUNCTION delete_branch(source_id integer)
     AS 
 $$
 DECLARE
-    item_path ltree;
+    item_path ext.ltree;
 BEGIN
     SELECT path INTO item_path FROM area WHERE id = source_id;
     DELETE FROM area WHERE path <@ item_path;
