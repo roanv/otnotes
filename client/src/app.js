@@ -9,13 +9,15 @@ import NotFound from "./components/notFound";
 import Page from "./objects/page";
 import AreasOfDevelopment from "./components/areasOfDevelopment";
 import DragDrop2 from "./components/DragDrop2";
+import Areas from "./components/areas";
 
 const App = () => {
   const pages = [
     // new Page("Notes", <Notes goals={goals} principles={principles}></Notes>),
 
     // new Page("Goals", <Goals />),
-    new Page("Drag Drop", <DragDrop2></DragDrop2>),
+    new Page("Areas of Development", <Areas></Areas>),
+    // new Page("Drag Drop", <DragDrop2></DragDrop2>),
     // new Page("Drag Drop", <AreasOfDevelopment />),
     // new Page("Principles", <Principles />),
   ];
