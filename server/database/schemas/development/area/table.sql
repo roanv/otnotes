@@ -1,10 +1,9 @@
--- RUN AS ADMIN
-SET SCHEMA 'development';
+SET search_path TO development, extensions;
 
-CREATE TABLE IF NOT EXISTS area (
+CREATE TABLE area (
     id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL UNIQUE,
-    path ext.ltree
+    path ltree
 );
 
 CREATE INDEX tree_path_idx ON area USING GIST (path);
@@ -14,7 +13,7 @@ GRANT SELECT, UPDATE(path), DELETE ON area TO mod;
 GRANT SELECT, INSERT ON area TO api;
 GRANT UPDATE (name) ON area TO api;
 
-CREATE OR REPLACE FUNCTION validate_area_path_insert() 
+CREATE FUNCTION validate_area_path_insert() 
     RETURNS TRIGGER 
     LANGUAGE plpgsql
 AS $$
@@ -30,17 +29,18 @@ END;
 $$;
 
 ALTER FUNCTION validate_area_path_insert OWNER TO mod;
+ALTER FUNCTION validate_area_path_insert SET search_path = development, extensions;
 
-CREATE OR REPLACE TRIGGER validate_area_path_insert BEFORE INSERT ON area FOR EACH ROW EXECUTE PROCEDURE validate_area_path_insert();
+CREATE TRIGGER validate_area_path_insert BEFORE INSERT ON area FOR EACH ROW EXECUTE PROCEDURE validate_area_path_insert();
 
-CREATE OR REPLACE FUNCTION move_branch(source_id integer,destination_id integer) 
+CREATE FUNCTION move_branch(source_id integer,destination_id integer) 
     RETURNS VOID 
     SECURITY DEFINER
     AS 
 $$
 DECLARE
-    old_path ext.ltree;
-    new_path ext.ltree;
+    old_path ltree;
+    new_path ltree;
 BEGIN
     SELECT path INTO old_path FROM area WHERE id = source_id;
     IF destination_id IS NULL THEN 
@@ -57,14 +57,15 @@ END;
 $$ LANGUAGE plpgsql;
 
 ALTER FUNCTION move_branch OWNER TO mod;
+ALTER FUNCTION move_branch SET search_path = development, extensions;
 
-CREATE OR REPLACE FUNCTION delete_branch(source_id integer) 
+CREATE FUNCTION delete_branch(source_id integer)     
     RETURNS VOID 
     SECURITY DEFINER
     AS 
 $$
 DECLARE
-    item_path ext.ltree;
+    item_path ltree;
 BEGIN
     SELECT path INTO item_path FROM area WHERE id = source_id;
     DELETE FROM area WHERE path <@ item_path;
@@ -72,3 +73,4 @@ END;
 $$ LANGUAGE plpgsql;
 
 ALTER FUNCTION delete_branch OWNER TO mod;
+ALTER FUNCTION delete_branch SET search_path = development, extensions;

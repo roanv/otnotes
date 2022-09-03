@@ -9,3 +9,5 @@ CREATE ROLE api PASSWORD :'api_pass'; -- limited privilege - ONLY USE API to int
 ALTER ROLE admin WITH LOGIN;
 GRANT CONNECT, CREATE ON DATABASE otnotes TO admin;
 GRANT mod TO admin; -- to allow shifting ownership of functions
+
+ALTER ROLE api SET search_path TO development;
