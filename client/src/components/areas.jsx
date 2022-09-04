@@ -5,17 +5,21 @@ import api from "../services/areas";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import DragDropListButton from "./dragDropListButton";
-import TreeList from "../objects/treeList";
+import TreeList from "../classes/treeList";
 
 const ACTIONS = {
-  SET: "fetched",
+  SET: "set",
   EXPAND: "expand",
 };
 
 function reducer(areas, { type, payload }) {
   switch (type) {
     case ACTIONS.SET:
-      return new TreeList(payload);
+      return new TreeList({ list: payload });
+    case ACTIONS.EXPAND:
+      const newTree = new TreeList({ clone: areas, expanded: payload });
+      console.log(newTree);
+      return newTree;
     default:
       console.log("unexpected dispatch");
   }
@@ -23,7 +27,7 @@ function reducer(areas, { type, payload }) {
 
 function Areas() {
   const [title, setTitle] = useTitle();
-  const [areas, dispatch] = useReducer(reducer, new TreeList([]));
+  const [areas, dispatch] = useReducer(reducer, new TreeList({ list: [] }));
 
   useEffect(() => {
     setTitle("Areas of Development");
@@ -70,6 +74,7 @@ function Areas() {
 
   return (
     <TreeView
+      onNodeToggle={(e, payload) => dispatch({ type: ACTIONS.EXPAND, payload })}
       disableSelection={true}
       defaultCollapseIcon={<ExpandMoreIcon />}
       defaultExpandIcon={<ChevronRightIcon />}

@@ -6,7 +6,7 @@ import Goals from "./components/goals";
 import Principles from "./components/principles";
 import Layout from "./components/layout";
 import NotFound from "./components/notFound";
-import Page from "./objects/page";
+import Page from "./classes/page";
 import AreasOfDevelopment from "./components/areasOfDevelopment";
 import DragDrop2 from "./components/DragDrop2";
 import Areas from "./components/areas";
