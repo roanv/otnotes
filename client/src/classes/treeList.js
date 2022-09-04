@@ -1,7 +1,7 @@
 export default class TreeList {
   #list = [];
   #tree = [];
-  constructor({ clone, list: fromList, expanded }) {
+  constructor({ clone, fromList, expand }) {
     if (clone) {
       this.#list = clone.list;
       this.#tree = clone.tree;
@@ -9,7 +9,7 @@ export default class TreeList {
       this.#list = fromList;
       this.#createTree();
     }
-    if (expanded) this.#expand(expanded);
+    if (expand) this.#setExpanded(expand);
   }
   get tree() {
     return this.#tree;
@@ -34,13 +34,13 @@ export default class TreeList {
     });
     this.#tree = tree.filter((item) => item);
   }
-  #expand(expanded) {
-    expanded = expanded.map((item) => {
+  #setExpanded(expandList) {
+    expandList = expandList.map((item) => {
       return parseInt(item);
     });
     this.#list.map((item) => {
-      if (expanded.find((id) => id === item.id)) item.expanded = true;
-      else item.expand = false;
+      if (expandList.find((id) => id === item.id)) item.expanded = true;
+      else item.expanded = false;
     });
   }
 }

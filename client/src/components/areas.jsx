@@ -15,9 +15,9 @@ const ACTIONS = {
 function reducer(areas, { type, payload }) {
   switch (type) {
     case ACTIONS.SET:
-      return new TreeList({ list: payload });
+      return new TreeList({ fromList: payload });
     case ACTIONS.EXPAND:
-      const newTree = new TreeList({ clone: areas, expanded: payload });
+      const newTree = new TreeList({ clone: areas, expand: payload });
       console.log(newTree);
       return newTree;
     default:
