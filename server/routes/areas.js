@@ -18,7 +18,10 @@ function getResponse(operation, subject, item, error) {
   }
   let { status, message } = decode[error.code] || decode["default"];
   if (status === 500) console.log("unexpected database error: ", error);
-  return { status, message: `Could not ${operation} ${subject} ${message}.` };
+  return {
+    status,
+    message: `Could not ${operation} ${subject} ${message}. Error code: ${code}.`,
+  };
 }
 
 router.post("/", async (req, res) => {
