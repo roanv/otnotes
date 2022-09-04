@@ -7,25 +7,40 @@ import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import DragDropListButton from "./dragDropListButton";
 
 const ACTIONS = {
-  SET: "set",
+  FETCHED: "fetched",
+  EXPAND: "expand",
 };
+
+function convertPaths(list) {
+  return list.map((item) => {
+    if (!Array.isArray(item.path)) {
+      item.path = item.path.split(".");
+      item.path = item.path.map((path) => parseInt(path));
+      return item;
+    }
+  });
+}
+
+function treeFromList(list) {
+  const tree = list.map((area) => {
+    const parentID = area.path[area.path.length - 2];
+    if (parentID) {
+      const parent = list.find((item) => item.id === parentID);
+      if (!parent.children) parent.children = [];
+      parent.children.push(area);
+      return;
+    }
+    return area;
+  });
+  return tree.filter((item) => item);
+}
 
 function reducer(areas, { type, payload }) {
   switch (type) {
-    case ACTIONS.SET:
-      const result = payload.map((area) => {
-        area.path = area.path.split(".");
-        area.path = area.path.map((path) => parseInt(path));
-        const parentID = area.path[area.path.length - 2];
-        if (parentID) {
-          const parent = payload.find((item) => item.id === parentID);
-          if (!parent.children) parent.children = [];
-          parent.children.push(area);
-          return null;
-        }
-        return area;
-      });
-      return result.filter((item) => item);
+    case ACTIONS.FETCHED:
+      const list = convertPaths(payload);
+      const tree = treeFromList(list);
+      return { list, tree };
     default:
       console.log("unexpected dispatch");
   }
@@ -33,7 +48,7 @@ function reducer(areas, { type, payload }) {
 
 function Areas() {
   const [title, setTitle] = useTitle();
-  const [areas, dispatch] = useReducer(reducer, []);
+  const [areas, dispatch] = useReducer(reducer, { tree: [], list: [] });
 
   useEffect(() => {
     setTitle("Areas of Development");
@@ -43,7 +58,7 @@ function Areas() {
     async function fetchAreas() {
       try {
         const payload = await api.fetch();
-        dispatch({ type: ACTIONS.SET, payload });
+        dispatch({ type: ACTIONS.FETCHED, payload });
       } catch (error) {
         console.log(error.message);
       }
@@ -66,8 +81,17 @@ function Areas() {
   }
 
   function renderNode(node) {
-    return <DragDropListButton node={node}></DragDropListButton>;
+    return (
+      <DragDropListButton
+        handleDrag={handleDrag}
+        handleDrop={handleDrop}
+        node={node}
+      ></DragDropListButton>
+    );
   }
+
+  function handleDrag() {}
+  function handleDrop() {}
 
   return (
     <TreeView
@@ -75,7 +99,7 @@ function Areas() {
       defaultCollapseIcon={<ExpandMoreIcon />}
       defaultExpandIcon={<ChevronRightIcon />}
     >
-      {renderRoots(areas)}
+      {renderRoots(areas.tree)}
     </TreeView>
   );
 }

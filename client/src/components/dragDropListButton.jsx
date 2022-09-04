@@ -86,7 +86,7 @@ function DragDropListButton({ node, handleDrop, handleDrag }) {
         }
         disabled={node.isDragging}
       >
-        <ListItemText primary={`${node.name}`}></ListItemText>
+        <ListItemText primary={`${node.id} # ${node.name}`}></ListItemText>
       </ListItemButton>
       {hovering && action === dropBox.OPTIONS.BOTTOM ? <Divider /> : null}
     </div>
