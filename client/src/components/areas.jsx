@@ -5,42 +5,17 @@ import api from "../services/areas";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import DragDropListButton from "./dragDropListButton";
+import TreeList from "../objects/treeList";
 
 const ACTIONS = {
-  FETCHED: "fetched",
+  SET: "fetched",
   EXPAND: "expand",
 };
 
-function convertPaths(list) {
-  return list.map((item) => {
-    if (!Array.isArray(item.path)) {
-      item.path = item.path.split(".");
-      item.path = item.path.map((path) => parseInt(path));
-      return item;
-    }
-  });
-}
-
-function treeFromList(list) {
-  const tree = list.map((area) => {
-    const parentID = area.path[area.path.length - 2];
-    if (parentID) {
-      const parent = list.find((item) => item.id === parentID);
-      if (!parent.children) parent.children = [];
-      parent.children.push(area);
-      return;
-    }
-    return area;
-  });
-  return tree.filter((item) => item);
-}
-
 function reducer(areas, { type, payload }) {
   switch (type) {
-    case ACTIONS.FETCHED:
-      const list = convertPaths(payload);
-      const tree = treeFromList(list);
-      return { list, tree };
+    case ACTIONS.SET:
+      return new TreeList(payload);
     default:
       console.log("unexpected dispatch");
   }
@@ -48,7 +23,7 @@ function reducer(areas, { type, payload }) {
 
 function Areas() {
   const [title, setTitle] = useTitle();
-  const [areas, dispatch] = useReducer(reducer, { tree: [], list: [] });
+  const [areas, dispatch] = useReducer(reducer, new TreeList([]));
 
   useEffect(() => {
     setTitle("Areas of Development");
@@ -58,7 +33,7 @@ function Areas() {
     async function fetchAreas() {
       try {
         const payload = await api.fetch();
-        dispatch({ type: ACTIONS.FETCHED, payload });
+        dispatch({ type: ACTIONS.SET, payload });
       } catch (error) {
         console.log(error.message);
       }
