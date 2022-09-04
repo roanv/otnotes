@@ -10,7 +10,15 @@ import { TouchBackend } from "react-dnd-touch-backend";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <BrowserRouter>
-    <DndProvider backend={TouchBackend} options={{ enableMouseEvents: true }}>
+    <DndProvider
+      backend={TouchBackend}
+      options={{
+        enableMouseEvents: true,
+        delayTouchStart: 100,
+        ignoreContextMenu: true,
+        touchSlop: 10,
+      }}
+    >
       <TitleProvider>
         <App />
       </TitleProvider>
