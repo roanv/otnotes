@@ -14,7 +14,7 @@ root.render(
       backend={TouchBackend}
       options={{
         enableMouseEvents: true,
-        delayTouchStart: 200,
+        delayTouchStart: 600,
         ignoreContextMenu: true,
         touchSlop: 10,
       }}
