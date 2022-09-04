@@ -20,7 +20,7 @@ function getResponse(operation, subject, item, error) {
   if (status === 500) console.log("unexpected database error: ", error);
   return {
     status,
-    message: `Could not ${operation} ${subject} ${message}. Error code: ${code}.`,
+    message: `Could not ${operation} ${subject} ${message}.`,
   };
 }
 
