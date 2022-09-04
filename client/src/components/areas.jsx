@@ -17,9 +17,7 @@ function reducer(areas, { type, payload }) {
     case ACTIONS.SET:
       return new TreeList({ fromList: payload });
     case ACTIONS.EXPAND:
-      const newTree = new TreeList({ clone: areas, expand: payload });
-      console.log(newTree);
-      return newTree;
+      return new TreeList({ clone: areas, expand: payload });
     default:
       console.log("unexpected dispatch");
   }
@@ -75,6 +73,7 @@ function Areas() {
   return (
     <TreeView
       onNodeToggle={(e, payload) => dispatch({ type: ACTIONS.EXPAND, payload })}
+      expanded={areas.getExpandedNodes()}
       disableSelection={true}
       defaultCollapseIcon={<ExpandMoreIcon />}
       defaultExpandIcon={<ChevronRightIcon />}

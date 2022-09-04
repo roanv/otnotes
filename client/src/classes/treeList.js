@@ -43,4 +43,10 @@ export default class TreeList {
       else item.expanded = false;
     });
   }
+  getExpandedNodes() {
+    const expanded = this.#list.filter((item) => item.expanded);
+    return expanded.map((item) => {
+      return item.id.toString();
+    });
+  }
 }
