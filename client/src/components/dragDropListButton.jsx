@@ -6,7 +6,7 @@ export const TYPE = {
 };
 
 const dropBox = {
-  OPTIONS: { TOP: -1, MIDDLE: 0, BOTTOM: 1 },
+  DIRECTIONS: { UP: -1, CENTER: 0, DOWN: 1 },
   divisions: 3,
 
   _section: { top: {}, bottom: {}, set: false },
@@ -27,14 +27,14 @@ const dropBox = {
 function DragDropListButton({ node, handleDrop, handleDrag }) {
   const { id, name } = node;
   const ref = useRef(null);
-  const [action, setAction] = useState(null);
+  const [direction, setDirection] = useState(null);
 
   const [{ hovering }, drop] = useDrop({
     accept: TYPE.ITEM,
     drop: (item, monitor) => {
       const origin = item.id;
       const target = id;
-      handleDrop(origin, target, action);
+      handleDrop({ origin, target, direction });
     },
     collect: (monitor) => ({
       hovering: monitor.canDrop() && monitor.isOver(),
@@ -43,19 +43,19 @@ function DragDropListButton({ node, handleDrop, handleDrag }) {
       const element = ref.current?.getBoundingClientRect();
 
       if (!dropBox.section.set) dropBox.section = element.bottom - element.top;
-      const { section, OPTIONS } = dropBox;
+      const { section, DIRECTIONS: OPTIONS } = dropBox;
 
       const mouseGlobal = monitor.getClientOffset();
       const mouse = mouseGlobal.y - element.top;
 
       if (mouse > section.top.min && mouse < section.top.max)
-        setAction(OPTIONS.TOP);
+        setDirection(OPTIONS.UP);
 
       if (mouse > section.top.max && mouse < section.bottom.min) {
-        setAction(OPTIONS.MIDDLE);
+        setDirection(OPTIONS.CENTER);
       }
       if (mouse > section.bottom.min && mouse < section.bottom.max)
-        setAction(OPTIONS.BOTTOM);
+        setDirection(OPTIONS.DOWN);
     },
   });
 
@@ -78,17 +78,19 @@ function DragDropListButton({ node, handleDrop, handleDrag }) {
   drag(drop(ref));
 
   return (
-    <div ref={ref}>
-      {hovering && action === dropBox.OPTIONS.TOP ? <Divider /> : null}
+    <div ref={ref} onContextMenu={(e) => e.preventDefault()}>
+      {hovering && direction === dropBox.DIRECTIONS.UP ? <Divider /> : null}
       <ListItemButton
         selected={
-          !node.isDragging && hovering && action === dropBox.OPTIONS.MIDDLE
+          !node.isDragging &&
+          hovering &&
+          direction === dropBox.DIRECTIONS.CENTER
         }
         disabled={node.isDragging}
       >
         <ListItemText primary={`${node.id} # ${node.name}`}></ListItemText>
       </ListItemButton>
-      {hovering && action === dropBox.OPTIONS.BOTTOM ? <Divider /> : null}
+      {hovering && direction === dropBox.DIRECTIONS.DOWN ? <Divider /> : null}
     </div>
   );
 }

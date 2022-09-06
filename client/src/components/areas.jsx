@@ -21,7 +21,9 @@ function reducer(areas, { type, payload }) {
     case ACTIONS.EXPAND:
       return new TreeList({ clone: areas, expand: payload });
     case ACTIONS.DRAG:
-      return new TreeList({ clone: areas, drag: payload });
+      if (!areas.keys[payload].isDragging)
+        return new TreeList({ clone: areas, drag: payload });
+      else return areas;
     case ACTIONS.DROP:
       return new TreeList({ clone: areas, drop: payload });
     default:
@@ -31,7 +33,7 @@ function reducer(areas, { type, payload }) {
 
 function Areas() {
   const [title, setTitle] = useTitle();
-  const [areas, dispatch] = useReducer(reducer, new TreeList({ list: [] }));
+  const [areas, dispatch] = useReducer(reducer, new TreeList({ fromList: [] }));
 
   useEffect(() => {
     setTitle("Areas of Development");
@@ -63,19 +65,11 @@ function Areas() {
     });
   }
 
-  function handleDrag(id) {
-    if (!areas.keys[id].isDragging)
-      dispatch({ type: ACTIONS.DRAG, payload: id });
-  }
-  function handleDrop(origin, target, action) {
-    dispatch({ type: ACTIONS.DROP, payload: { origin, target, action } });
-  }
-
   function renderNode(node) {
     return (
       <DragDropListButton
-        handleDrag={handleDrag}
-        handleDrop={handleDrop}
+        handleDrag={(payload) => dispatch({ type: ACTIONS.DRAG, payload })}
+        handleDrop={(payload) => dispatch({ type: ACTIONS.DROP, payload })}
         node={node}
       ></DragDropListButton>
     );
@@ -84,7 +78,7 @@ function Areas() {
   return (
     <TreeView
       onNodeToggle={(e, payload) => dispatch({ type: ACTIONS.EXPAND, payload })}
-      expanded={areas.getExpandedNodes()}
+      expanded={areas.getExpanded()}
       disableSelection={true}
       defaultCollapseIcon={<ExpandMoreIcon />}
       defaultExpandIcon={<ChevronRightIcon />}
