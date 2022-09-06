@@ -30,7 +30,7 @@ export default class TreeList {
 
   #createTree() {
     this.#convertPaths();
-    this.#sort();
+    // this.#sort();
     const tree = this.#list.map((item) => {
       const parent = this.getParent(item);
       if (parent) {
@@ -44,7 +44,7 @@ export default class TreeList {
   }
 
   #sort() {
-    const sorted = this.#list.sort((a, b) => {
+    this.#list.sort((a, b) => {
       function compare(a, b, depth) {
         const orderA = a.sort_path[depth];
         const orderB = b.sort_path[depth];
@@ -75,7 +75,7 @@ export default class TreeList {
   #convertPaths() {
     this.#list.map((item) => {
       item.path = this.#toArray(item.path);
-      item.sort_path = this.#toArray(item.sort_path);
+      // item.sort_path = this.#toArray(item.sort_path);
     });
   }
 

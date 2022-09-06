@@ -3,7 +3,8 @@ SET search_path TO development, extensions;
 CREATE TABLE area (
     id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL UNIQUE,
-    path ltree
+    path ltree,
+    -- sort ltree
 );
 
 CREATE INDEX tree_path_idx ON area USING GIST (path);
@@ -33,7 +34,7 @@ ALTER FUNCTION validate_area_path_insert SET search_path = development, extensio
 
 CREATE TRIGGER validate_area_path_insert BEFORE INSERT ON area FOR EACH ROW EXECUTE PROCEDURE validate_area_path_insert();
 
-CREATE FUNCTION move_branch(source_id integer,destination_id integer) 
+CREATE OR REPLACE FUNCTION move_branch(source_id integer,destination_id integer, sort integer) 
     RETURNS VOID 
     SECURITY DEFINER
     AS 
@@ -58,6 +59,27 @@ $$ LANGUAGE plpgsql;
 
 ALTER FUNCTION move_branch OWNER TO mod;
 ALTER FUNCTION move_branch SET search_path = development, extensions;
+
+-- CREATE OR REPLACE FUNCTION reorder(source_id integer, new_sort integer) 
+--     RETURNS VOID
+--     SECURITY DEFINER
+--     AS
+-- $$
+-- DECLARE 
+--     old_sort ltree;
+--     prefix ltree;
+--     postfix ltree;
+-- BEGIN
+--     SELECT sort_path INTO old_sort FROM area WHERE id = source_id;
+--     UPDATE area SET sort_path = 
+--     CASE 
+--         WHEN nlevel(sort_path) = nlevel(old_sort)
+--             THEN subpath(sort_path,0, nlevel(old_sort)-1) || new_sort::text 
+--             ELSE subpath(sort_path,0, nlevel(old_sort)-1) || new_sort::text || subpath(sort_path,nlevel(old_sort)) 
+--     END
+--     WHERE sort_path <@ old_sort;
+-- END;
+-- $$ LANGUAGE plpgsql;
 
 CREATE FUNCTION delete_branch(source_id integer)     
     RETURNS VOID 

@@ -14,15 +14,16 @@ async function getRows(query) {
 
 exports.create = async function create(item) {
   requireInput(item, ["name"]);
-  const insert = `INSERT INTO ${TABLE} (${COL.NAME})`;
-  const values = ` VALUES ('${item.name}')`;
-  const result = ` RETURNING *`;
-  return await getRows(insert + values + result);
+  let query = `INSERT INTO ${TABLE} (${COL.NAME})`;
+  query += ` VALUES ('${item.name}')`;
+  query += ` RETURNING *`;
+  return await getRows(query);
 };
 
 exports.get = async function get(item) {
   let query = `SELECT * FROM ${TABLE}`;
   if (item && item.id) query += ` WHERE id='${item.id}'`;
+  query += " ORDER BY name ASC";
   return await getRows(query);
 };
 
